@@ -30,7 +30,7 @@ const Beasts = (props) => {
 	};
 
 	const stripRefs = (object) => {
-		let { ref, clone, ...rest } = object;
+		let { ref, clone, copy, ...rest } = object;
 		return rest;
 	};
 

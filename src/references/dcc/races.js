@@ -1,10 +1,12 @@
 export const races = {
-	Human: {
+	human: {
+		key: 'human',
 		raceName: 'Human',
 		languages: [{ref: {propertyPath: 'languages.common'}}],
 		speed: 30
 	},
-	Dwarf: {
+	dwarf: {
+		key: 'dwarf',
 		raceName: 'Dwarf',
 		languages: [{ref: {propertyPath: 'languages.common'}}, {ref: {propertyPath: 'languages.dwarvish'}}],
 		speed: 20,
@@ -26,14 +28,16 @@ export const races = {
 			'sling'
 		]
 	},
-	Elf: {
+	elf: {
+		key: 'elf',
 		raceName: 'Elf',
 		languages: [{ref: {propertyPath: 'languages.common'}}, {ref: {propertyPath: 'languages.elvish'}}],
 		speed: 30,
 		characteristics: ['Spellcasting', 'Sensitivity to iron', "Infravision 60'", 'Immune to magical sleep and paralysis', 'Observant'],
 		trainedWeapons: ['Dagger', 'Javelin', 'Longbow', 'Longsword', 'Shortbow', 'Short sword', 'Staff', 'Spear', 'Two-handed sword']
 	},
-	Halfling: {
+	halfling: {
+		key: 'halfling',
 		raceName: 'Halfling',
 		languages: [{ref: {propertyPath: 'languages.common'}}, {ref: {propertyPath: 'languages.halfling'}}],
 		speed: 20,

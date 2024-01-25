@@ -163,8 +163,7 @@ const CharacterCore = () => {
 											height: '29px',
 											textAlign: 'center',
 											marginTop: '4px'
-										}}
-										>
+										}}>
 										Base: {character.armorClass.base.value}
 									</div>
 								</div>
@@ -331,8 +330,8 @@ const CharacterCore = () => {
 							<TextInput
 								label='Check Modifier'
 								className='text-center'
-								value={character.checkModifier}
-								onChange={(e) => handleChange('checkModifier', e.target.value)}
+								value={character.checkModifier.value}
+								onChange={(e) => handleChange('checkModifier.value', e.target.value)}
 							/>
 						</Col>
 						<Col lg='2'>
@@ -470,8 +469,20 @@ const CharacterCore = () => {
 			<Armor characterId={characterId} />
 			<Equipment characterId={characterId} />
 			<Beasts characterId={characterId} />
+			{/* <pre>
+				<code>{JSON.stringify(character.hitPoints.current.value, null, 2)}</code>
+			</pre> */}
 			<pre>
-				<code>{JSON.stringify(character.armorClass.armorModifier, null, 2)}</code>
+				<code>
+					TODO: <br />
+					Birth Auger stat affects <br />
+					Beasts inheriting HP from character (because of the ref to the top level object...) <br />
+					Save to localstorage Death <br />
+					Leveling up <br />
+					Money <br />
+					Fumbles & Crits on rolls
+					<br />
+				</code>
 			</pre>
 		</Container>
 	);

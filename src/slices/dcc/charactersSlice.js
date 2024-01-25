@@ -6,38 +6,37 @@ import { dccReferences } from '../../references/dccReferences';
 export const generateCharacter = () => {
 	let references = dccReferences;
 
-	//TODO: Figure out how to have clone replace the value instead of adding it to the array.
-
 	let newCharacter = {
 		id: crypto.getRandomValues(new Uint32Array(1))[0],
 		startingCharacter: { clone: { propertyPath: ['startingCharacters', rollDice(dice.d4).total - 1] } },
-		 inititive: { dice: { number: 1, die: dice.d20, modifier: { ref: { propertyPath: 'agility.currentModifier' } } } },
-		 name: { copy: { propertyPath: ['characterNames', { ref: { propertyPath: 'raceName' } }, rollDice(dice.d20).total - 1] } }, //TODO: Look up race
-		 levelNumber: '0',
-		 level: { ref: { propertyPath: ['levels', { ref: { propertyPath: 'levelNumber' } }] } },
-		 xp: 0,
-		 nextLevel: { ref: { propertyPath: ['levels', { sum: [{ ref: { propertyPath: 'levelNumber' } }, 1] }] } },
-		 alignment: { clone: { propertyPath: `alignments.${rollDice(dice.d3).total - 1}` } },
-		 class: { ref: { propertyPath: 'classes.none' } },
-		 title: { clone: { propertyPath: ['class', 'classLevel', 'title', { ref: { propertyPath: 'alignment.key' } }] } },
-		 critTable: { clone: { propertyPath: ['critTables', { ref: { propertyPath: 'critTableNumber' } }] } },
-		 fumbleTable: { ref: { propertyPath: 'fumbleTable' } },
-		 raceName: { copy: { propertyPath: 'startingCharacter.race.raceName' } },
-		 speed: { copy: { propertyPath: 'startingCharacter.race.speed' } },
-		 languages: { copy: { propertyPath: 'startingCharacter.race.languages' } },
-		 characteristics: { copy: { propertyPath: 'startingCharacter.race.characteristics' } },
-		 trainedWeapons: { copy: { propertyPath: 'startingCharacter.race.trainedWeapons' } },
-		 occupationName: { copy: { propertyPath: 'startingCharacter.occupation.occupationName' } },
-		 weapons: { copy: { propertyPath: 'startingCharacter.occupation.weapons' } },
-		 armor: { copy: { propertyPath: 'startingCharacter.occupation.armor' } },
-		 equipment: { copy: { propertyPath: 'startingCharacter.occupation.equipment' } },
-		 beasts: { copy: { propertyPath: 'startingCharacter.occupation.beasts' } },
-		 strength: {
-		 	base: rollDice({ number: 3, die: dice.d3 }).total,
-		 	tempModifier: 0,
-		 	modifier: { ref: { propertyPath: ['attributeModifiers', { ref: { propertyPath: 'strength.base' } }] } },
-		 	currentModifier: { sum: [{ ref: { propertyPath: 'strength.modifier' } }, { ref: { propertyPath: 'strength.tempModifier' } }] }
-		 },
+		// startingCharacter: { clone: { propertyPath: ['startingCharacters', 4] } },
+		inititive: { dice: { number: 1, die: dice.d20, modifier: { ref: { propertyPath: 'agility.currentModifier' } } } },
+		name: { copy: { propertyPath: ['characterNames', { ref: { propertyPath: 'raceName' } }, rollDice(dice.d20).total - 1] } }, //TODO: Look up race
+		levelNumber: '0',
+		level: { ref: { propertyPath: ['levels', { ref: { propertyPath: 'levelNumber' } }] } },
+		xp: 0,
+		nextLevel: { ref: { propertyPath: ['levels', { sum: [{ ref: { propertyPath: 'levelNumber' } }, 1] }] } },
+		alignment: { clone: { propertyPath: `alignments.${rollDice(dice.d3).total - 1}` } },
+		class: { ref: { propertyPath: 'classes.none' } },
+		title: { clone: { propertyPath: ['class', 'classLevel', 'title', { ref: { propertyPath: 'alignment.key' } }] } },
+		critTable: { clone: { propertyPath: ['critTables', { ref: { propertyPath: 'critTableNumber' } }] } },
+		fumbleTable: { ref: { propertyPath: 'fumbleTable' } },
+		raceName: { copy: { propertyPath: 'startingCharacter.race.raceName' } },
+		speed: { sum: [{ ref: { propertyPath: 'armor.[].speedModifier' } }, { copy: { propertyPath: 'startingCharacter.race.speed' } }] },
+		languages: { copy: { propertyPath: 'startingCharacter.race.languages' } },
+		characteristics: { copy: { propertyPath: 'startingCharacter.race.characteristics' } },
+		trainedWeapons: { copy: { propertyPath: 'startingCharacter.race.trainedWeapons' } },
+		occupationName: { copy: { propertyPath: 'startingCharacter.occupation.occupationName' } },
+		weapons: { copy: { propertyPath: 'startingCharacter.occupation.weapons' } },
+		armor: { copy: { propertyPath: 'startingCharacter.occupation.armor' } },
+		equipment: { copy: { propertyPath: 'startingCharacter.occupation.equipment' } },
+		beasts: { copy: { propertyPath: 'startingCharacter.occupation.beasts' } },
+		strength: {
+			base: rollDice({ number: 3, die: dice.d3 }).total,
+			tempModifier: 0,
+			modifier: { ref: { propertyPath: ['attributeModifiers', { ref: { propertyPath: 'strength.base' } }] } },
+			currentModifier: { sum: [{ ref: { propertyPath: 'strength.modifier' } }, { ref: { propertyPath: 'strength.tempModifier' } }] }
+		},
 		agility: {
 			base: rollDice({ number: 3, die: dice.d3 }).total,
 			tempModifier: 0,
@@ -68,18 +67,17 @@ export const generateCharacter = () => {
 			modifier: { ref: { propertyPath: ['attributeModifiers', { ref: { propertyPath: 'intelligence.base' } }] } },
 			currentModifier: { sum: [{ ref: { propertyPath: 'intelligence.modifier' } }, { ref: { propertyPath: 'intelligence.tempModifier' } }] }
 		},
-		// armorClass: { base: { sum: [10, { ref: { propertyPath: 'agility.currentModifier' } }] }, current: { clone: { propertyPath: 'armorClass.base' } } },
-		armorClass: { 
-			base: { sum: [10, { ref: { propertyPath: 'agility.currentModifier' } }] }, 
-			armorModifier: { ref: { propertyPath: 'armor.[].armorClassModifier' } },
-			current: { clone: { propertyPath: 'armorClass.base' } } 
+		armorClass: {
+			base: { sum: [10, { ref: { propertyPath: 'agility.currentModifier' } }] },
+			armorModifier: { sum: [{ ref: { propertyPath: 'armor.[].armorClassModifier' } }] },
+			calculated: { sum: [{ ref: { propertyPath: 'armorClass.base' } }, { ref: { propertyPath: 'armorClass.armorModifier.value' } }] },
+			current: { clone: { propertyPath: 'armorClass.calculated.value' } }
 		},
-		// TODO: hitpoints should be min 1.  With the stamina mod, they can go to 0 or below!
 		hitPoints: {
-			max: { sumClone: [rollDice(dice.d4).total, { ref: { propertyPath: 'stamina.currentModifier' } }] },
-			current: { clone: { propertyPath: 'hitPoints.max' } }
+			max: { rangeLimit: { min: 1, value: { sumClone: [rollDice(dice.d4).total, { ref: { propertyPath: 'stamina.currentModifier' } }] } } },
+			current: { rangeLimit: { max: { ref: { propertyPath: 'hitPoints.max' } }, min: 0, value: { copy: { propertyPath: 'hitPoints.max' } } } }
 		},
-		checkModifier: 0,
+		checkModifier: { sum: [{ ref: { propertyPath: 'armor.[].checkModifier' } }] },
 		meleeAttackModifier: { clone: { propertyPath: 'strength.currentModifier' } },
 		meleeDamageModifier: { clone: { propertyPath: 'strength.currentModifier' } },
 		missileAttackModifier: { clone: { propertyPath: 'agility.currentModifier' } },

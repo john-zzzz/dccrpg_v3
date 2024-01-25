@@ -146,34 +146,33 @@ const CharacterFundamentals = () => {
 				<>
 					<Row className='mt-2'>
 						<Col>
-							<DieSelector
-								label='Deed Die'
-								value={character.class.deedDie}
-								onChange={(property, value) => handleChange(`class.deedDie.${property}`, value)}
+							<DieSelector label='Deed Die' value={character.class.deedDie} onChange={(property, value) => handleChange(`class.deedDie.${property}`, value)} />
+						</Col>
+					</Row>
+					<Row className='mt-2'>
+						<Col>
+							<TextInput
+								label='Critical Hit Range'
+								value={`${character.class.criticalHitRange.min}+`}
+								onChange={(e) => handleChange('class.criticalHitRange.min', e.target.value)}
 							/>
 						</Col>
 					</Row>
 					<Row className='mt-2'>
 						<Col>
-							<TextInput label='Critical Hit Range' value={`${character.class.criticalHitRange.min}+`} 
-							onChange={ (e) => handleChange('class.criticalHitRange.min', e.target.value)} />
+							<SelectInput
+								label='Lucky Weapon'
+								value={character.class.luckyWeapon}
+								options={Object.keys(references.weapons).map((option) => {
+									return { label: references.weapons[option].type, value: option };
+								})}
+								onChange={(value) => handleChange('class.luckyWeapon', value)}
+							/>
 						</Col>
 					</Row>
-					<Row className='mt-2'>
-					<Col>
-						<SelectInput
-							label='Lucky Weapon'
-							value={character.class.luckyWeapon}
-							options={Object.keys(references.weapons).map((option) => {
-								return { label: references.weapons[option].type, value: option };
-							})}
-							onChange={(value) => handleChange('class.luckyWeapon', value)}
-						/>
-					</Col>
-				</Row>
 				</>
 			)}
-			
+
 			<Row className='mt-2'>
 				<Col>
 					<TextInput
@@ -193,6 +192,19 @@ const CharacterFundamentals = () => {
 					/>
 				</Col>
 			</Row>
+			{character.characteristics && (
+				<Row>
+					<Col>
+						<div className='form-control'>
+							{Object.keys(character.characteristics)
+								.map((characteristicKey, characteristicIndex) => {
+									return character.characteristics[characteristicKey];
+								})
+								.join(', ')}
+						</div>
+					</Col>
+				</Row>
+			)}
 		</div>
 	);
 };
