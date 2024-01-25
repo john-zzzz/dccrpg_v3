@@ -1,0 +1,30 @@
+import { coinTypes } from './coinTypes';
+
+export const equipment = {
+	backpack: { key: 'backpack', name: 'Backpack', cost: { number: 2, coinType: coinTypes.gold } },
+	candle: { key: 'candle', name: 'Candle', cost: { number: 1, coinType: coinTypes.copper } },
+	chain10ft: { key: 'chain10ft', name: "Chain 10'", cost: { number: 30, coinType: coinTypes.gold } },
+	chalk: { key: 'chalk', name: 'Chalk', cost: { number: 1, coinType: coinTypes.copper } },
+	chest: { key: 'chest', name: 'Chest, empty', cost: { number: 2, coinType: coinTypes.gold } },
+	crowbar: { key: 'crowbar', name: 'Crowbar', cost: { number: 2, coinType: coinTypes.gold } },
+	flask: { key: 'flask', name: 'Flask, empty', cost: { number: 3, coinType: coinTypes.copper } },
+	flintAndSteel: { key: 'flintAndSteel', name: 'Flint & steel', cost: { number: 15, coinType: coinTypes.copper } },
+	grapplingHook: { key: 'grapplingHook', name: 'Grappling hook', cost: { number: 1, coinType: coinTypes.gold } },
+	hammer: { key: 'hammer', name: 'Hammer, small', cost: { number: 5, coinType: coinTypes.silver } },
+	holySymbol: { key: 'holySymbol', name: 'Holy symbol', cost: { number: 25, coinType: coinTypes.gold } },
+	holyWater: { key: 'holyWater', name: 'Holy water, 1 vial**', cost: { number: 25, coinType: coinTypes.gold } },
+	ironSpike: { key: 'ironSpike', name: 'Iron spike', cost: { number: 1, coinType: coinTypes.silver } },
+	lantern: { key: 'lantern', name: 'Lantern', cost: { number: 10, coinType: coinTypes.gold } },
+	mirror: { key: 'mirror', name: 'Mirror, hand-sized', cost: { number: 10, coinType: coinTypes.gold } },
+	oilFlask: { key: 'oilFlask', name: 'Oil, 1 flask***', cost: { number: 2, coinType: coinTypes.silver } },
+	pole: { key: 'pole', name: 'Pole, 10-foot', cost: { number: 10, coinType: coinTypes.copper } },
+	ration: { key: 'ration', name: 'Rations, per day', cost: { number: 5, coinType: coinTypes.copper } },
+	rope50ft: { key: 'rope50ft', name: "Rope, 50'", cost: { number: 25, coinType: coinTypes.copper } },
+	largeSack: { key: 'largeSack', name: 'Sack, large', cost: { number: 12, coinType: coinTypes.copper } },
+	smallSack: { key: 'smallSack', name: 'Sack, small', cost: { number: 8, coinType: coinTypes.copper } },
+	thievesTools: { key: 'thievesTool', name: "Thieve's tools", cost: { number: 25, coinType: coinTypes.gold } },
+	torch: { key: 'torch', name: 'Torch, each', cost: { number: 1, coinType: coinTypes.copper } },
+	waterskin: { key: 'waterskin', name: 'Waterskin', cost: { number: 5, coinType: coinTypes.silver } },
+	ironHelmet: { key: 'ironHelmet', name: 'Iron Helmet', cost: {} },
+	spyglass: { key: 'spyglass', name: 'Spyglass', cost: {} }
+};
