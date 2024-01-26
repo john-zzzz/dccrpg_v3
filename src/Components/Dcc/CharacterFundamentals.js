@@ -183,8 +183,8 @@ const CharacterFundamentals = (props) => {
 				<Col>
 					<DieSelector
 						label='Fumble Die'
-						value={character.fumbleDie}
-						onChange={(property, value) => handleChange(`fumbleDie.${property}`, value)}
+						value={character.fumbleDie[0]}
+						onChange={(property, value) => handleChange(`fumbleDie.0.${property}`, value)}
 					/>
 				</Col>
 			</Row>

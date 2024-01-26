@@ -47,6 +47,24 @@ export const getProperty = (object, propertyPath) => {
 
 		if (currentObject.hasOwnProperty(property)) {
 			currentObject = currentObject[property];
+		} else if (property.startsWith('[') && property.endsWith(']') && property.length > 2) {
+			// value.[property=abc].otherProperty
+			const [filterProperty, filterValue] = property.substring(1, property.length - 1).split('=');
+			if (filterProperty && filterValue) {
+				let arrayProperties = properties.slice(++i, properties.length);
+
+				if (Array.isArray(currentObject)) {
+					currentObject = currentObject.map((arrayItem) => {
+						return getProperty(arrayItem, arrayProperties.join('.'));
+					});
+				} else {
+					currentObject = Object.keys(currentObject).map((itemKey) => {
+						if (currentObject[itemKey][filterProperty] && currentObject[itemKey][filterProperty].toString() === filterValue.toString()) {
+							return getProperty(currentObject[itemKey], arrayProperties.join('.'));
+						}
+					});
+				}
+			}
 		} else if (property === '[]') {
 			let arrayProperties = properties.slice(++i, properties.length);
 

@@ -19,7 +19,7 @@ export const generateCharacter = () => {
 		alignment: { clone: { propertyPath: `alignments.${rollDice(dice.d3).total - 1}` } },
 		class: { ref: { propertyPath: 'classes.none' } },
 		title: { clone: { propertyPath: ['class', 'classLevel', 'title', { ref: { propertyPath: 'alignment.key' } }] } },
-		critTable: { clone: { propertyPath: ['critTables', { ref: { propertyPath: 'critTableNumber' } }] } },
+		// critTable: { clone: { propertyPath: ['critTables', { ref: { propertyPath: 'critTableNumber' } }] } },
 		fumbleTable: { ref: { propertyPath: 'fumbleTable' } },
 		raceName: { copy: { propertyPath: 'startingCharacter.race.raceName' } },
 		speed: { sum: [{ ref: { propertyPath: 'armor.[].speedModifier' } }, { copy: { propertyPath: 'startingCharacter.race.speed' } }] },
