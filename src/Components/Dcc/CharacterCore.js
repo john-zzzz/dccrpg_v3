@@ -2,7 +2,7 @@ import { Button, Col, InputGroup, Row, Container, Form, FloatingLabel } from 're
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import TextInput from '../Controls/TextInput';
-import { updateCharacter } from '../../slices/dcc/charactersSlice';
+import { updateCharacterProperty } from '../../slices/dcc/charactersSlice';
 import SelectInput from '../Controls/SelectInput';
 import { dccReferences } from '../../references/dccReferences';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,6 +16,7 @@ import Equipment from './Equipment';
 import Beasts from './Beasts';
 import { WarriorCore } from './Warrior';
 import Armor from './Armor';
+import Leveller from './Leveller';
 
 const CharacterAttribute = (props) => {
 	let { name, attribute, onChange, onRollDice } = props;
@@ -97,7 +98,7 @@ const CharacterCore = () => {
 	};
 
 	const handleChange = (propertyPath, value) => {
-		dispatch(updateCharacter({ characterId: character.id, propertyPath: propertyPath, value: value }));
+		dispatch(updateCharacterProperty({ characterId: character.id, propertyPath: propertyPath, value: value }));
 	};
 
 	const handleDiceRoll = (name, dice, property) => {

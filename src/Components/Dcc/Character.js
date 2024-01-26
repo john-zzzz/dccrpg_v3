@@ -7,11 +7,13 @@ import { faArrowLeft, faUser } from '@fortawesome/free-solid-svg-icons';
 import CharacterFundamentals from './CharacterFundamentals';
 import CharacterCore from './CharacterCore';
 import DiceHistory from '../Controls/DiceHistory';
+import Leveller from './Leveller';
 
 const Character = () => {
 	let contentTop = '50px';
 	const leftDrawerInitialWidth = '65px';
-
+	
+	const [showLeveller, setShowLeveller] = useState(false);
 	const [leftDrawer, setLeftDrawer] = useState({ isOpen: false, width: leftDrawerInitialWidth });
 
 	const params = useParams();
@@ -30,6 +32,10 @@ const Character = () => {
 		setLeftDrawer({ isOpen: !isOpen, width: width || isOpen ? leftDrawerInitialWidth : '300px' });
 	};
 
+	const handleShowLeveller = (show) => {
+		setShowLeveller(show);
+	};
+
 	if (!character) {
 		// TODO, put something fun here, character falling into a pit or something.
 		return <div>Character not found</div>;
@@ -37,6 +43,7 @@ const Character = () => {
 
 	return (
 		<div>
+			<Leveller show={showLeveller} onClose={() => handleShowLeveller(false)} characterId={characterId} />
 			<div
 				style={{
 					overflowX: 'hidden',
@@ -63,7 +70,7 @@ const Character = () => {
 							<>
 								<Row className='pt-1'>
 									<Col>
-										<CharacterFundamentals />
+										<CharacterFundamentals onShowLeveller={(show) => handleShowLeveller(show)} />
 									</Col>
 								</Row>
 							</>

@@ -6,7 +6,7 @@ import sword from '../../images/sword.png';
 import { faShieldAlt, faPlus, faTrash, faInfoCircle, faWandMagicSparkles, faClover } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { dccReferences } from '../../references/dccReferences';
-import { updateCharacter } from '../../slices/dcc/charactersSlice';
+import { updateCharacterProperty } from '../../slices/dcc/charactersSlice';
 import DieSelector from '../Controls/DieSelector';
 import CoinSelector from '../Controls/CoinSelector';
 import { addDiceRoll, rollDice } from '../../slices/diceSlice';
@@ -22,7 +22,7 @@ const Weapons = (props) => {
 	});
 
 	const handleChange = (propertyPath, value) => {
-		dispatch(updateCharacter({ characterId: character.id, propertyPath: propertyPath, value: value }));
+		dispatch(updateCharacterProperty({ characterId: character.id, propertyPath: propertyPath, value: value }));
 	};
 
 	const handleAddWeapon = (weapon) => {

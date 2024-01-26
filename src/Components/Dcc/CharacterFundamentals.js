@@ -1,19 +1,20 @@
-import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { Button, Col, InputGroup, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import TextInput from '../Controls/TextInput';
-import { updateCharacter } from '../../slices/dcc/charactersSlice';
+import { updateCharacterProperty } from '../../slices/dcc/charactersSlice';
 import SelectInput from '../Controls/SelectInput';
 import { dccReferences } from '../../references/dccReferences';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusMinus } from '@fortawesome/free-solid-svg-icons';
 import DieSelector from '../Controls/DieSelector';
-import { rollDice } from '../../slices/diceSlice';
 
-const CharacterFundamentals = () => {
+const CharacterFundamentals = (props) => {
+	const { onShowLeveller } = props;
+
 	const params = useParams();
 	let characterId = params.characterId;
-
+	
 	const dispatch = useDispatch();
 	const references = dccReferences;
 	let character = useSelector((state) => {
@@ -21,11 +22,16 @@ const CharacterFundamentals = () => {
 	});
 
 	const handleChange = (propertyPath, value) => {
-		dispatch(updateCharacter({ characterId: character.id, propertyPath: propertyPath, value: value }));
+		dispatch(updateCharacterProperty({ characterId: character.id, propertyPath: propertyPath, value: value }));
 	};
 
+	const handleShowLeveller = (show) => {
+		onShowLeveller(show);
+	};
+
+	//TODO: Move this somewhere generic.
 	const stripRefs = (object) => {
-		let { ref, clone, ...rest } = object;
+		let { ref, clone, copy, ...rest } = object;
 		return rest;
 	};
 
@@ -61,10 +67,11 @@ const CharacterFundamentals = () => {
 				<Col>
 					<InputGroup>
 						<TextInput label='Level' type='number' value={character.levelNumber} onChange={(e) => handleChange('levelNumber', parseInt(e.target.value))} />
-						<Button
-							variant='outline-secondary'
-							//  onClick={() => showLevelManager()}
-						>
+						<TextInput label='XP' type='number' value={character.xp} onChange={(e) => handleChange('xp', parseInt(e.target.value))} />
+						<InputGroup.Text style={character.xp >= character.nextLevel.xp ? { color: 'green', fontWeight: 'bold' } : {}}>
+							/{character.nextLevel.xp}
+						</InputGroup.Text>
+						<Button variant='outline-secondary' onClick={() => handleShowLeveller(true)}>
 							<FontAwesomeIcon icon={faPlusMinus} />
 						</Button>
 					</InputGroup>
@@ -99,17 +106,6 @@ const CharacterFundamentals = () => {
 					<InputGroup>
 						<TextInput label='Speed' type='text' value={character.speed.value || ''} onChange={(e) => handleChange('speed.value', parseInt(e.target.value))} />
 						<InputGroup.Text>ft</InputGroup.Text>
-					</InputGroup>
-				</Col>
-			</Row>
-
-			<Row className='mt-2'>
-				<Col>
-					<InputGroup>
-						<TextInput label='Experience Points' type='number' value={character.xp} onChange={(e) => handleChange('xp', parseInt(e.target.value))} />
-						<InputGroup.Text style={character.xp >= character.nextLevel.xp ? { color: 'green', fontWeight: 'bold' } : {}}>
-							/{character.nextLevel.xp}
-						</InputGroup.Text>
 					</InputGroup>
 				</Col>
 			</Row>
@@ -187,12 +183,12 @@ const CharacterFundamentals = () => {
 				<Col>
 					<DieSelector
 						label='Fumble Die'
-						value={character.class.fumbleDie}
-						onChange={(property, value) => handleChange(`fumbleDie.class.${property}`, value)}
+						value={character.fumbleDie}
+						onChange={(property, value) => handleChange(`fumbleDie.${property}`, value)}
 					/>
 				</Col>
 			</Row>
-			{character.characteristics && (
+			{character.characteristics && (Object.keys(character.characteristics).length > 0) && (
 				<Row>
 					<Col>
 						<div className='form-control'>

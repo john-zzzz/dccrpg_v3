@@ -90,6 +90,8 @@ export const getValues = (object, referenceObjects, rootObject) => {
 
 			if (currentObject.propertyPath) {
 				let refValues;
+				let skip = false;
+
 				if (Array.isArray(currentObject.propertyPath)) {
 					let evaluatedPathParts = [];
 					currentObject.propertyPath.forEach((pathPart) => {
@@ -103,42 +105,49 @@ export const getValues = (object, referenceObjects, rootObject) => {
 				if (refValues !== undefined) refValues = JSON.parse(JSON.stringify(refValues));
 				getValues(refValues, referenceObjects, rootObject);
 				if (refValues === undefined) {
-					continue;
+					skip = true;
 				}
 
-				if (typeof refValues === 'string' || typeof refValues === 'number') {
-					refValues = { value: refValues };
-				}
+				if (!skip) {
+					if (typeof refValues === 'string' || typeof refValues === 'number') {
+						refValues = { value: refValues };
+					}
 
-				if (object.ref) {
-					Object.keys(object).forEach((objectKey) => {
-						if (objectKey === 'ref') return;
-						delete object[objectKey];
-					});
+					if (object.ref) {
+						Object.keys(object).forEach((objectKey) => {
+							if (objectKey === 'ref') return;
+							delete object[objectKey];
+						});
 
-					if (!refValues) continue;
-					Object.keys(refValues).forEach((refValuesKey) => {
-						if (refValues[refValuesKey] === null || refValues[refValuesKey] === undefined) return;
-						object[refValuesKey] = refValues[refValuesKey];
-					});
-				}
-				if (object.clone) {
-					object.clone._values = {};
-					Object.keys(refValues).forEach((refValueKey) => {
-						object.clone._values[refValueKey] = refValues[refValueKey];
-						if (object._values && object._values[refValueKey]) {
-							object[refValueKey] = object._values[refValueKey];
-						} else {
-							object[refValueKey] = refValues[refValueKey];
+						if (!refValues) skip = true;
+						if (!skip) {
+							Object.keys(refValues).forEach((refValuesKey) => {
+								if (refValues[refValuesKey] === null || refValues[refValuesKey] === undefined) return;
+								object[refValuesKey] = refValues[refValuesKey];
+							});
 						}
-					});
+					}
+					if (object.clone) {
+						object.clone._values = {};
+						Object.keys(refValues).forEach((refValueKey) => {
+							object.clone._values[refValueKey] = refValues[refValueKey];
+							if (object._values && object._values[refValueKey]) {
+								object[refValueKey] = object._values[refValueKey];
+							} else {
+								object[refValueKey] = refValues[refValueKey];
+							}
+						});
+					}
+
+					if (object.copy) {
+						Object.keys(refValues).forEach((refValueKey) => {
+							object[refValueKey] = refValues[refValueKey];
+						});
+					}
 				}
 
 				if (object.copy) {
 					delete object.copy;
-					Object.keys(refValues).forEach((refValueKey) => {
-						object[refValueKey] = refValues[refValueKey];
-					});
 				}
 			} else {
 				// console.info(`"ref" does not have a propertyPath.  Inspect "${JSON.stringify(referenceObjects)}" for a "ref" property without a "propertyPath" value.`);

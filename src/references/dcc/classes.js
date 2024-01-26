@@ -174,9 +174,6 @@ export const classes = {
 		deedDie: { clone: { propertyPath: 'class.classLevel.deedDie' } },
 		criticalHitRange: { clone: { propertyPath: 'class.classLevel.criticalHitRange' } },
 		actionDice: { clone: { propertyPath: 'class.classLevel.actionDice' } }
-		// actionDice: { clone: { propertyPath: 'class.classLevel.actionDice' } },
-
-		// classLevel: { ref: { propertyPath: ['classLevels', 'warrior', { ref: { propertyPath: 'levelNumber' } }] } }
 	},
 	cleric: { key: 'cleric', name: 'Cleric' },
 	wizard: { key: 'wizard', name: 'Wizard' }

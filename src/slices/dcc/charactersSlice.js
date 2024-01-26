@@ -77,6 +77,7 @@ export const generateCharacter = () => {
 			max: { rangeLimit: { min: 1, value: { sumClone: [rollDice(dice.d4).total, { ref: { propertyPath: 'stamina.currentModifier' } }] } } },
 			current: { rangeLimit: { max: { ref: { propertyPath: 'hitPoints.max' } }, min: 0, value: { copy: { propertyPath: 'hitPoints.max' } } } }
 		},
+		fumbleDie: { ref: { propertyPath: 'armor.[equipped=true].fumbleDie' } },
 		checkModifier: { sum: [{ ref: { propertyPath: 'armor.[].checkModifier' } }] },
 		meleeAttackModifier: { clone: { propertyPath: 'strength.currentModifier' } },
 		meleeDamageModifier: { clone: { propertyPath: 'strength.currentModifier' } },
@@ -104,6 +105,12 @@ const dccCharactersSlice = createSlice({
 			state = state.filter((character) => character.id !== action.payload.id);
 		},
 		updateCharacter: (state, action) => {
+			const characterIndex = state.findIndex((character) => character.id === action.payload.id);
+			// let newCharacter = JSON.parse(JSON.stringify(state[characterIndex]));
+			getValues(action.payload, JSON.parse(JSON.stringify(dccReferences)));
+			state[characterIndex] = action.payload;
+		},
+		updateCharacterProperty: (state, action) => {
 			const characterIndex = state.findIndex((character) => character.id === action.payload.characterId);
 			let character = state[characterIndex];
 
@@ -116,6 +123,6 @@ const dccCharactersSlice = createSlice({
 	}
 });
 
-export const { addCharacter, removeCharacter, updateCharacter } = dccCharactersSlice.actions;
+export const { addCharacter, removeCharacter, updateCharacter, updateCharacterProperty } = dccCharactersSlice.actions;
 
 export default dccCharactersSlice.reducer;
