@@ -59,10 +59,12 @@ export const getProperty = (object, propertyPath) => {
 					});
 				} else {
 					currentObject = Object.keys(currentObject).map((itemKey) => {
+						// TODO: we can use getProperty on currentObject[itemKey][filterProperty] to support deeper properties
 						if (currentObject[itemKey][filterProperty] && currentObject[itemKey][filterProperty].toString() === filterValue.toString()) {
 							return getProperty(currentObject[itemKey], arrayProperties.join('.'));
 						}
 					});
+					currentObject = currentObject.filter((item) => item !== undefined);
 				}
 			}
 		} else if (property === '[]') {
@@ -137,11 +139,14 @@ export const getValues = (object, referenceObjects, rootObject) => {
 							delete object[objectKey];
 						});
 
-						if (!refValues) skip = true;
-						if (!skip) {
+						if (refValues !== undefined && Object.keys(refValues).length > 0) {
 							Object.keys(refValues).forEach((refValuesKey) => {
 								if (refValues[refValuesKey] === null || refValues[refValuesKey] === undefined) return;
 								object[refValuesKey] = refValues[refValuesKey];
+							});
+						} else if (object.ref._default) {
+							Object.keys(object.ref._default).forEach((defaultValueKey) => {
+								object[defaultValueKey] = object.ref._default[defaultValueKey];
 							});
 						}
 					}
@@ -243,6 +248,28 @@ export const getValues = (object, referenceObjects, rootObject) => {
 			object.value = value;
 			if (min != undefined && value <= min) object.value = min;
 			if (max != undefined && value >= max) object.value = max;
+		} else if (object.first) {
+			object.value = undefined;
+			getValues(object.first, referenceObjects, rootObject);
+			Object.keys(object.first).forEach((firstKey) => {
+				if (!isNaN(firstKey)) {
+					object.value = object.first[firstKey];
+				}
+			});
+			if (object.value === undefined) {
+				object.value = object.first;
+			}
+
+			// } else if (typeof object.first === 'object') {
+			// 	Object.keys(object.first).some((firstKey) => {
+			// 		if (!isNaN(firstKey)) {
+			// 			object.value = object.first[firstKey];
+			// 		}
+			// 	});
+			// }
+			// if (object.value === undefined) {
+			// 	object.value = object.first;
+			// }
 		}
 
 		// TODO: minLimit has generic code to get the value.  Refactor the rest of the "math-y" code to use it.

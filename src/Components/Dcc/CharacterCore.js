@@ -1,4 +1,4 @@
-import { Button, Col, InputGroup, Row, Container, Form, FloatingLabel } from 'react-bootstrap';
+import { Button, Col, InputGroup, Row, Container, Form, FloatingLabel, Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import TextInput from '../Controls/TextInput';
@@ -17,6 +17,7 @@ import Beasts from './Beasts';
 import { WarriorCore } from './Warrior';
 import Armor from './Armor';
 import Leveller from './Leveller';
+import FormattedDieResult from '../Controls/FormattedDieResult';
 
 const CharacterAttribute = (props) => {
 	let { name, attribute, onChange, onRollDice } = props;
@@ -79,6 +80,7 @@ const CharacterCore = () => {
 	});
 
 	const [hitPointChange, setHitPointChange] = useState();
+	const [showModal, setShowModal] = useState({ show: false });
 
 	const handleHitPointsChange = (operator) => {
 		if (hitPointChange === undefined) return;
@@ -125,18 +127,76 @@ const CharacterCore = () => {
 		return rest;
 	};
 
+	const handleCriticalHitRoll = () => {
+		let rollResult = rollDice(character.class.critDie, 'Critical Hit');
+		setShowModal({
+			name: 'Critical Hit',
+			roll: rollResult,
+			show: true,
+			result: references.critTables[character.class.critTableNumber.value][rollResult.total]
+		});
+		dispatch(addDiceRoll(rollResult));
+	};
+	const handleFumbleRoll = () => {
+		let rollResult = rollDice(stripRefs(character.fumbleDie.value), 'Fumble');
+		setShowModal({
+			name: 'Fumble',
+			roll: rollResult,
+			show: true,
+			result: references.fumbleTable[rollResult.total]
+		});
+		dispatch(addDiceRoll(rollResult));
+	};
 	if (!character) {
 		return <div></div>;
 	}
 
 	return (
 		<Container fluid>
+			{showModal.show && (
+				<Modal show={showModal.show} onHide={() => setShowModal({ show: false })}>
+					<Modal.Header>{showModal.name}</Modal.Header>
+					<Modal.Body>
+						<Row>
+							{showModal.roll.dice &&
+								showModal.roll.dice.map((die, dieIndex) => (
+									<Col key={dieIndex} className='b'>
+										<FormattedDieResult die={die} />
+									</Col>
+								))}
+						</Row>
+						<Row class='mb-4'>
+							<Col>{showModal.result.text}</Col>
+						</Row>
+						
+						{showModal.result.rolls &&
+							showModal.result.rolls.map((roll, rollIndex) => {
+								return (
+									<Row key={rollIndex}>
+										<Col>
+											<Button variant='outline-secondary' onClick={() => handleDiceRoll(showModal.result.rolls.name || showModal.name, showModal.result.rolls)}>
+												<FontAwesomeIcon icon={faDiceD20} />
+												<FormattedDieResult die={roll} />
+											</Button>
+										</Col>
+									</Row>
+								);
+							})}
+						<Row>
+							<Col></Col>
+						</Row>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button variant='outline-secondary' onClick={() => setShowModal({ show: false })}>Close</Button>
+					</Modal.Footer>
+				</Modal>
+			)}
 			<Row className='mt-2'>
 				<Col xs='12' lg='3'>
 					<Row className='pb-2'>
 						<Col xs='6'>
 							<div className='w-100' style={{ border: '1px solid black', height: '110px', borderRadius: '4px' }}>
-								<div style={{ paddingLeft: '4px', borderBottom: '1px solid black' }}>
+								<div style={{ paddingLeft: '4px', borderBottom: '1px solid black', textWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
 									<FontAwesomeIcon icon={faShieldAlt} /> Armor Class
 								</div>
 								<div>
@@ -204,7 +264,7 @@ const CharacterCore = () => {
 											marginTop: '4px'
 										}}
 										onClick={() => handleDiceRoll('Inititive', character.inititive.dice, 'inititive.current')}>
-										{formatDieResult(character.inititive.dice)} <FontAwesomeIcon icon={faDiceD20} />
+										<FontAwesomeIcon icon={faDiceD20} /> {formatDieResult(character.inititive.dice)}
 									</div>
 								</div>
 							</div>
@@ -280,7 +340,7 @@ const CharacterCore = () => {
 							</div>
 						</Col>
 					</Row>
-					<Row>
+					<Row className='pb-2'>
 						<Col xs='12'>
 							<div className='form-control'>
 								<label style={{ transform: 'scale(.85)' }}>Action Dice</label>
@@ -303,14 +363,25 @@ const CharacterCore = () => {
 														handleActionDiceRoll(`Action Die ${actionDieIndex + 1}`, actionDice);
 													}}>
 													<FontAwesomeIcon icon={faDiceD20} />
-													{character.class.actionDice[actionDie].number}d{character.class.actionDice[actionDie].die}
-													{character.class.actionDice[actionDie].modifier && `+${character.class.actionDice[actionDie].modifier}`}
+													<FormattedDieResult die={character.class.actionDice[actionDie]} />
 												</Button>
 											</Col>
 										);
 									})}
 								</Row>
 							</div>
+						</Col>
+					</Row>
+					<Row className='pb-2'>
+						<Col>
+							<Button className='w-100' variant='outline-success' onClick={() => handleCriticalHitRoll()}>
+								<FontAwesomeIcon icon={faDiceD20} /> Critical Hit
+							</Button>
+						</Col>
+						<Col>
+							<Button className='w-100' variant='outline-danger' onClick={() => handleFumbleRoll()}>
+								<FontAwesomeIcon icon={faDiceD20} /> Fumble
+							</Button>
 						</Col>
 					</Row>
 					<Row>
@@ -470,9 +541,9 @@ const CharacterCore = () => {
 			<Armor characterId={characterId} />
 			<Equipment characterId={characterId} />
 			<Beasts characterId={characterId} />
-			{/* <pre>
-				<code>{JSON.stringify(character.hitPoints.current.value, null, 2)}</code>
-			</pre> */}
+			<pre>
+				<code>{JSON.stringify(character.fumbleDie, null, 2)}</code>
+			</pre>
 			<pre>
 				<code>
 					TODO: <br />

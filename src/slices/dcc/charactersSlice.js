@@ -22,7 +22,7 @@ export const generateCharacter = () => {
 		// critTable: { clone: { propertyPath: ['critTables', { ref: { propertyPath: 'critTableNumber' } }] } },
 		fumbleTable: { ref: { propertyPath: 'fumbleTable' } },
 		raceName: { copy: { propertyPath: 'startingCharacter.race.raceName' } },
-		speed: { sum: [{ ref: { propertyPath: 'armor.[].speedModifier' } }, { copy: { propertyPath: 'startingCharacter.race.speed' } }] },
+		speed: { sum: [{ ref: { propertyPath: 'armor.[equipped=true].speedModifier' } }, { copy: { propertyPath: 'startingCharacter.race.speed' } }] },
 		languages: { copy: { propertyPath: 'startingCharacter.race.languages' } },
 		characteristics: { copy: { propertyPath: 'startingCharacter.race.characteristics' } },
 		trainedWeapons: { copy: { propertyPath: 'startingCharacter.race.trainedWeapons' } },
@@ -77,8 +77,10 @@ export const generateCharacter = () => {
 			max: { rangeLimit: { min: 1, value: { sumClone: [rollDice(dice.d4).total, { ref: { propertyPath: 'stamina.currentModifier' } }] } } },
 			current: { rangeLimit: { max: { ref: { propertyPath: 'hitPoints.max' } }, min: 0, value: { copy: { propertyPath: 'hitPoints.max' } } } }
 		},
-		fumbleDie: { ref: { propertyPath: 'armor.[equipped=true].fumbleDie' } },
-		checkModifier: { sum: [{ ref: { propertyPath: 'armor.[].checkModifier' } }] },
+		defaultFumbleDie:{ first: { ref: { propertyPath: 'armor.[equipped=true].fumbleDie', _default: { number: 1, die: dice.d4 } } } },
+		//TODO: Figure out how to return just a single one... maybe a first: [] filter?
+		fumbleDie: { clone: { propertyPath: 'defaultFumbleDie' }},
+		checkModifier: { sum: [{ ref: { propertyPath: 'armor.[equipped=true].checkModifier' } }] },
 		meleeAttackModifier: { clone: { propertyPath: 'strength.currentModifier' } },
 		meleeDamageModifier: { clone: { propertyPath: 'strength.currentModifier' } },
 		missileAttackModifier: { clone: { propertyPath: 'agility.currentModifier' } },
@@ -88,6 +90,13 @@ export const generateCharacter = () => {
 		willpowerModifier: { clone: { propertyPath: 'personality.currentModifier' } },
 		birthAuger: { ref: { propertyPath: ['birthAugers', rollDice(dice.d30).total - 1] } }
 	};
+
+	//TODO: keywords start with '_', so _ref, _copy, etc.
+	
+	//TODO: Refactor the way clone and copy work.  It should be clone:{ <Object to clone> }.
+	// To clone a "ref", it should be clone:{ref: {propertyPath: <path>}}.  Copy should work the same.
+	// ref should be ref: '<path>'.
+
 	getValues(newCharacter, references);
 
 	return JSON.parse(JSON.stringify(newCharacter));
@@ -115,7 +124,7 @@ const dccCharactersSlice = createSlice({
 			let character = state[characterIndex];
 
 			let newCharacter = JSON.parse(JSON.stringify(character));
-			setValue(newCharacter, action.payload.propertyPath, JSON.parse(JSON.stringify(action.payload.value)));
+			setValue(newCharacter, action.payload.propertyPath, action.payload.value ? JSON.parse(JSON.stringify(action.payload.value)) : undefined);
 			getValues(newCharacter, JSON.parse(JSON.stringify(dccReferences)));
 
 			state[characterIndex] = newCharacter;

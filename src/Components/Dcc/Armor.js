@@ -81,6 +81,7 @@ const Armor = (props) => {
 				<Col lg='1'>Armor Class</Col>
 				<Col lg='1'>Check</Col>
 				<Col lg='1'>Speed</Col>
+				<Col lg='1'></Col>
 				<Col lg='3'>Fumble Die</Col>
 			</Row>
 			{character.armor &&
@@ -132,6 +133,7 @@ const Armor = (props) => {
 											onChange={(e) => handleChange(`armor.${armorKey}.speedModifier`, e.target.value)}
 										/>
 									</Col>
+									<Col lg='1'></Col>
 									<Col lg='3'>
 										<DieSelector
 											value={armor.fumbleDie}

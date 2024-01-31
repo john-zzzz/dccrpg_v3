@@ -27,6 +27,15 @@ export const rollDice = (dice, name) => {
 			die = { die: die };
 		}
 
+		// if (die.die === undefined) {
+		// 	// Check if it's an "object array", e.g. dice = {0: { die: 20, number: 2 }}
+		// 	Object.keys(die).forEach((key) => {
+		// 		if (die[key].die !== undefined) {
+		// 			die = die[key];
+		// 		}
+		// 	});
+		// }
+
 		die = {
 			number: 1,
 			rolls: [],
@@ -57,7 +66,7 @@ export const rollDice = (dice, name) => {
 
 export const formatDieResult = (die) => {
 	let diceCopy = JSON.parse(JSON.stringify(die));
-		diceCopy.modifier = (die.modifier && die.modifier.value) || die.modifier;
+	diceCopy.modifier = (die.modifier && die.modifier.value) || die.modifier;
 
 	let result = '';
 	result += `${diceCopy.number}d${diceCopy.die}`;

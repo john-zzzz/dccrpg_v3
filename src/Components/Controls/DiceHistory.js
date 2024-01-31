@@ -1,10 +1,11 @@
 import { Button, Col, InputGroup, Modal, Row, Toast, ToastContainer } from 'react-bootstrap';
 import DieSelector from './DieSelector';
-import { addDiceRoll, dice, formatDieResult, rollDice } from '../../slices/diceSlice';
+import { DieResultFormatter, addDiceRoll, dice, formatDieResult, rollDice } from '../../slices/diceSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiceD20, faHistory } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import FormattedDieResult from './FormattedDieResult';
 
 const DiceHistory = () => {
 	const [currentDie, setCurrentDie] = useState({ number: 1, die: dice.d20, modifier: 0 });
@@ -32,7 +33,7 @@ const DiceHistory = () => {
 	return (
 		<ToastContainer containerPosition='fixed' style={{ paddingLeft: '50px' }} position='bottom-end'>
 			<Toast show={true}>
-				<Toast.Body className='m-0'>
+				<Toast.Body className='m-0' style={{backgroundColor: 'white'}}>
 					{showRollHistory && (
 						<Row className='bb-1 pb-1'>
 							<Col>
@@ -53,7 +54,9 @@ const DiceHistory = () => {
 														{roll.dice.map((die, dieKey) => {
 															return (
 																<Row key={dieKey}>
-																	<Col xs='9'>{die.name}{die.name && ': '} {formatDieResult(die)}</Col>
+																	<Col>
+																		<FormattedDieResult die={die} />
+																	</Col>
 																</Row>
 															);
 														})}
@@ -89,7 +92,9 @@ const DiceHistory = () => {
 									{rolls.currentRoll.dice.map((die, dieKey) => {
 										return (
 											<Row key={dieKey}>
-												<Col xs='9'>{die.name}{die.name && ': '} {formatDieResult(die)}</Col>
+												<Col className='mb-1'>
+													<FormattedDieResult die={die} />
+												</Col>
 											</Row>
 										);
 									})}

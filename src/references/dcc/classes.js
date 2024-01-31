@@ -18,9 +18,19 @@ export const classLevels = {
 			fortitudeModifier: 1,
 			willPowerModifier: 0,
 			title: { lawful: 'Squire', chaotic: 'Bandit', neutral: 'Wildling' },
-			deedDie: { number: 1, die: dice.d3, ranges: [{ min: 3, variant: 'success' }] },
+			deedDie: { number: 1, die: dice.d3, ranges: [{ min: 3, name: 'Success', variant: 'success' }] },
 			criticalHitRange: { min: 19 },
-			actionDice: { die1: { number: 1, die: dice.d20 } }
+			//TODO: ranges should have dice refs associated so critical hits and fumbles happen
+			actionDice: {
+				die1: {
+					number: 1,
+					die: dice.d20,
+					ranges: [
+						{ min: { clone: { propertyPath: 'class.criticalHitRange.min' } }, name: 'Critical Hit!', variant: 'success' },
+						{ max: 15, name: 'Fumble!', variant: 'failure'}
+					]
+				}
+			}
 		},
 		2: {
 			key: 2,
