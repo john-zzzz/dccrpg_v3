@@ -11,68 +11,77 @@ import CoinSelector from '../Controls/CoinSelector';
 import { addDiceRoll, dice, formatDieResult, rollDice } from '../../slices/diceSlice';
 import SelectInput from '../Controls/SelectInput';
 import { useEffect, useState } from 'react';
-import { setValue } from '../../objectEvaluator/evaluator';
+import { setValue, evaluate, deepCopy } from '../../objectEvaluator/evaluator2';
 
 const Leveller = (props) => {
 	const { characterId, show, onClose } = props;
+	const [leveledModel, setLeveledModel] = useState();
 	const [leveledCharacter, setLeveledCharacter] = useState();
 	const [hitPointsIncrease, setHitPointsIncrease] = useState();
 	const dispatch = useDispatch();
 	const references = dccReferences;
 
-	let character = useSelector((state) => {
-		return state.dccCharacters.find((character) => character.id == characterId);
+	let { character, model } = useSelector((state) => {
+		let character = state.dccCharacters.find((character) => character.id == characterId);
+		return { character: character.character, model: character.model };
 	});
 
 	useEffect(() => {
 		if (leveledCharacter) return;
 		setLeveledCharacter(JSON.parse(JSON.stringify(character)));
+		setLeveledModel(JSON.parse(JSON.stringify(model)));
 	}, []);
 
 	const handleChange = (propertyPath, value) => {
 		let newLeveledCharacter = JSON.parse(JSON.stringify(leveledCharacter));
-		setValue(newLeveledCharacter, propertyPath, value, references);
+		// setValue(newLeveledCharacter, propertyPath, value, references);
 
-		if (propertyPath === 'class') {
-            let hitPointsIncrease = rollDice(newLeveledCharacter.class.hitDice);
-            setHitPointsIncrease(hitPointsIncrease);
-			setValue(newLeveledCharacter, 'hitPoints.max.value', leveledCharacter.hitPoints.max.value + hitPointsIncrease.total, references);
+		let newModel = setValue(deepCopy(leveledModel), propertyPath, value);
+		let newCharacter = evaluate(deepCopy(newModel), deepCopy(dccReferences));
+
+		if (propertyPath === 'class._ref') {
+			let hitPointsIncrease = rollDice(newCharacter.class.hitDice);
+			setHitPointsIncrease(hitPointsIncrease);
+			newModel = setValue(deepCopy(newModel), 'hitPoints.base', leveledCharacter.hitPoints.max + hitPointsIncrease.total);
+			newCharacter = evaluate(deepCopy(newModel), deepCopy(dccReferences));
 		}
 
-		setLeveledCharacter(newLeveledCharacter);
+		setLeveledModel(newModel);
+		setLeveledCharacter(newCharacter);
+
 	};
 
 	const handleSave = () => {
-		let newLeveledCharacter = JSON.parse(JSON.stringify(leveledCharacter));
-		dispatch(updateCharacter(newLeveledCharacter));
+		// let newLeveledCharacter = JSON.parse(JSON.stringify(leveledCharacter));
+		dispatch(updateCharacter(leveledModel));
 		onClose();
 	};
 
 	const handleCancel = () => {
 		setLeveledCharacter(undefined);
-        onClose();
+		onClose();
 	};
 
-	if (!leveledCharacter) return <div></div>;
+	if (!leveledCharacter || !show) return <div></div>;
 
 	return (
-        // animation={false} is needed to prevent it from blocking input.
+		// animation={false} is needed to prevent it from blocking input.
 		<Modal show={show} animation={false}>
 			<Modal.Header>
 				<Row className='w-100 align-items-center'>
 					<Col>
-						<b>{leveledCharacter.name.name}</b> (Level {character.levelNumber})
+						<b>{leveledCharacter.name}</b> (Level {character.level.key})
 					</Col>
 					<Col></Col>
 					<Col className='text-end'>
-						<Button variant='outline-success' onClick={() => handleChange('levelNumber', parseInt(leveledCharacter.levelNumber) + 1)}>
-							<FontAwesomeIcon icon={faArrowUp} /> Level {parseInt(character.levelNumber) + 1}
+						<Button variant='outline-success' onClick={() => handleChange('level._ref', `levels.${parseInt(leveledCharacter.level.key) + 1}`)}>
+							<FontAwesomeIcon icon={faArrowUp} /> Level {parseInt(character.level.key) + 1}
 						</Button>
 					</Col>
 				</Row>
 			</Modal.Header>
 			<Modal.Body>
-				{leveledCharacter.levelNumber === 1 && (
+				{leveledCharacter.level.key === 1 && (
 					<Row className='mt-1'>
 						<Col>
 							<SelectInput
@@ -81,7 +90,7 @@ const Leveller = (props) => {
 								options={Object.keys(references.classes).map((option) => {
 									return { label: references.classes[option].name, value: option };
 								})}
-								onChange={(value) => handleChange('class', references.classes[value])}
+								onChange={(value) => handleChange('class._ref', `classes.${value}`)}
 							/>
 						</Col>
 					</Row>
@@ -102,7 +111,7 @@ const Leveller = (props) => {
 						</Row>
 						<Row className='mt-1'>
 							<Col>
-								<div style={{ fontSize: '11pt', color: 'rgba(var(--bs-body-color-rgb),.65)' }}>Hit Points</div>
+								<div style={{ fontSize: '11pt', color: 'rgba(var(--bs-body-color-rgb),.65)' }}>Max Hit Points</div>
 							</Col>
 						</Row>
 						<Row className='mt-1 align-items-center'>
@@ -117,7 +126,7 @@ const Leveller = (props) => {
 											padding: '0px',
 											margin: '0px'
 										}}>
-										{leveledCharacter.hitPoints.current.value}
+										{character.hitPoints.max}
 									</div>
 								</div>
 							</Col>
@@ -149,7 +158,7 @@ const Leveller = (props) => {
 											padding: '0px',
 											margin: '0px'
 										}}>
-										{leveledCharacter.hitPoints.current.value + hitPointsIncrease.total}
+										{character.hitPoints.max + hitPointsIncrease.total}
 									</div>
 								</div>
 							</Col>

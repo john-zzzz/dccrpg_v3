@@ -1,22 +1,22 @@
 export const startingCharacters = [
 	{
-		race: { ref: { propertyPath: 'races.human' } },
-		occupation: { copy: { propertyPath: 'occupations.alchemist' } },
-	},
-    {
-		race: { ref: { propertyPath: 'races.human' } },
-		occupation: { copy: { propertyPath: 'occupations.animalTrainer' } },
-	},
-    {
-		race: { ref: { propertyPath: 'races.human' } },
-		occupation: { copy: { propertyPath: 'occupations.armorer' } },
-	},
-    {
-		race: { ref: { propertyPath: 'races.human' } },
-		occupation: { copy: { propertyPath: 'occupations.astrologer' } },
+		race: { _ref: 'races.human' },
+		occupation: { _ref: 'occupations.alchemist' }
 	},
 	{
-		race: { ref: { propertyPath: 'races.dwarf' } },
-		occupation: { copy: { propertyPath: 'occupations.dwarvenApothecarist' } },
+		race: { _ref: 'races.human' },
+		occupation: { _ref: 'occupations.animalTrainer' }
+	},
+	{
+		race: { _ref: 'races.human' },
+		occupation: { _ref: 'occupations.armorer' }
+	},
+	// {
+	// 	race: { _ref: 'races.human' },
+	// 	occupation: { _ref: 'occupations.astrologer' }
+	// },
+	{
+		race: { _ref: 'races.dwarf' },
+		occupation: { _ref: 'occupations.dwarvenApothecarist' }
 	}
 ];

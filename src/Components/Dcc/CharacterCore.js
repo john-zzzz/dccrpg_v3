@@ -18,6 +18,7 @@ import { WarriorCore } from './Warrior';
 import Armor from './Armor';
 import Leveller from './Leveller';
 import FormattedDieResult from '../Controls/FormattedDieResult';
+import Spells from './Spells';
 
 const CharacterAttribute = (props) => {
 	let { name, attribute, onChange, onRollDice } = props;
@@ -52,7 +53,7 @@ const CharacterAttribute = (props) => {
 				<Form.Control
 					disabled={true}
 					type='number'
-					value={attribute.modifier.value}
+					value={attribute.modifier}
 					style={{ textAlign: 'center' }}
 					onChange={(e) => handleChange('modifier.value', e.target.value)}
 				/>
@@ -60,9 +61,9 @@ const CharacterAttribute = (props) => {
 			<Button
 				style={{ minWidth: '80px' }}
 				variant='outline-secondary'
-				onClick={() => handleDiceRoll(name, { number: 1, die: dice.d20, modifier: attribute.currentModifier.value || 0 })}>
-				<FontAwesomeIcon icon={faDiceD20} /> {attribute.currentModifier.value > -1 && '+'}
-				{attribute.currentModifier.value}
+				onClick={() => handleDiceRoll(name, { number: 1, die: dice.d20, modifier: attribute.currentModifier || 0 })}>
+				<FontAwesomeIcon icon={faDiceD20} /> {attribute.currentModifier > -1 && '+'}
+				{attribute.currentModifier}
 			</Button>
 		</InputGroup>
 	);
@@ -75,9 +76,12 @@ const CharacterCore = () => {
 
 	const dispatch = useDispatch();
 	const references = dccReferences;
+
 	let character = useSelector((state) => {
 		return state.dccCharacters.find((character) => character.id == characterId);
 	});
+
+	character = character && character.character;
 
 	const [hitPointChange, setHitPointChange] = useState();
 	const [showModal, setShowModal] = useState({ show: false });
@@ -122,23 +126,18 @@ const CharacterCore = () => {
 		property && handleChange(property, rollResult.total);
 	};
 
-	const stripRefs = (object) => {
-		let { ref, clone, ...rest } = object;
-		return rest;
-	};
-
 	const handleCriticalHitRoll = () => {
-		let rollResult = rollDice(character.class.critDie, 'Critical Hit');
+		let rollResult = rollDice(character.class.classLevel.critDie, 'Critical Hit');
 		setShowModal({
 			name: 'Critical Hit',
 			roll: rollResult,
 			show: true,
-			result: references.critTables[character.class.critTableNumber.value][rollResult.total]
+			result: references.critTables[character.class.classLevel.critTableNumber][rollResult.total]
 		});
 		dispatch(addDiceRoll(rollResult));
 	};
 	const handleFumbleRoll = () => {
-		let rollResult = rollDice(stripRefs(character.fumbleDie.value), 'Fumble');
+		let rollResult = rollDice(character.fumbleDie, 'Fumble');
 		setShowModal({
 			name: 'Fumble',
 			roll: rollResult,
@@ -168,7 +167,7 @@ const CharacterCore = () => {
 						<Row class='mb-4'>
 							<Col>{showModal.result.text}</Col>
 						</Row>
-						
+
 						{showModal.result.rolls &&
 							showModal.result.rolls.map((roll, rollIndex) => {
 								return (
@@ -187,7 +186,9 @@ const CharacterCore = () => {
 						</Row>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button variant='outline-secondary' onClick={() => setShowModal({ show: false })}>Close</Button>
+						<Button variant='outline-secondary' onClick={() => setShowModal({ show: false })}>
+							Close
+						</Button>
 					</Modal.Footer>
 				</Modal>
 			)}
@@ -201,8 +202,8 @@ const CharacterCore = () => {
 								</div>
 								<div>
 									<input
-										value={character.armorClass.current.value}
-										onChange={(e) => handleChange('armorClass.current.value', e.target.value)}
+										value={character.armorClass.current}
+										onChange={(e) => handleChange('armorClass.current', e.target.value)}
 										type='number'
 										style={{
 											textAlign: 'center',
@@ -225,7 +226,7 @@ const CharacterCore = () => {
 											textAlign: 'center',
 											marginTop: '4px'
 										}}>
-										Base: {character.armorClass.base.value}
+										Base: {character.armorClass.base}
 									</div>
 								</div>
 							</div>
@@ -279,9 +280,9 @@ const CharacterCore = () => {
 								<Row>
 									<Col xs='5'>
 										<input
-											value={character.hitPoints.current.value || 0}
+											value={character.hitPoints.current || 0}
 											type='number'
-											onChange={(e) => handleChange('hitPoints.current.value', e.target.value)}
+											onChange={(e) => handleChange('hitPoints.current', e.target.value)}
 											style={{
 												width: '100%',
 												textAlign: 'center',
@@ -331,8 +332,8 @@ const CharacterCore = () => {
 													padding: '0px',
 													width: '100%'
 												}}
-												value={character.hitPoints.max.value || 0}
-												onChange={(e) => handleChange('hitPoints.max.value', e.target.value)}
+												value={character.hitPoints.max || 0}
+												onChange={(e) => handleChange('hitPoints.max', e.target.value)}
 											/>
 										</Col>
 									</Row>
@@ -346,7 +347,7 @@ const CharacterCore = () => {
 								<label style={{ transform: 'scale(.85)' }}>Action Dice</label>
 								<br />
 								<Row>
-									{Object.keys(stripRefs(character.class.actionDice)).map((actionDie, actionDieIndex) => {
+									{Object.keys(character.class.classLevel.actionDice).map((actionDie, actionDieIndex) => {
 										return (
 											<Col lg='6' key={actionDieIndex} className='mt-1'>
 												<Button
@@ -355,15 +356,15 @@ const CharacterCore = () => {
 													key={actionDieIndex}
 													className='w-100'
 													onClick={() => {
-														let actionDice = [{ name: 'Action Die', ...character.class.actionDice[actionDie] }];
-														if (character.class.deedDie) {
+														let actionDice = [{ name: 'Action Die', ...character.class.classLevel.actionDice[actionDie] }];
+														if (character.class.classLevel.deedDie) {
 															actionDice[0].name = 'Action Die';
-															actionDice.push({ name: 'Deed Die', ...character.class.deedDie });
+															actionDice.push({ name: 'Deed Die', ...character.class.classLevel.deedDie });
 														}
 														handleActionDiceRoll(`Action Die ${actionDieIndex + 1}`, actionDice);
 													}}>
 													<FontAwesomeIcon icon={faDiceD20} />
-													<FormattedDieResult die={character.class.actionDice[actionDie]} />
+													<FormattedDieResult die={character.class.classLevel.actionDice[actionDie]} />
 												</Button>
 											</Col>
 										);
@@ -402,8 +403,8 @@ const CharacterCore = () => {
 							<TextInput
 								label='Check Modifier'
 								className='text-center'
-								value={character.checkModifier.value}
-								onChange={(e) => handleChange('checkModifier.value', e.target.value)}
+								value={character.checkModifier}
+								onChange={(e) => handleChange('checkModifier', e.target.value)}
 							/>
 						</Col>
 						<Col lg='2'>
@@ -411,8 +412,8 @@ const CharacterCore = () => {
 								<TextInput
 									label='Melee Attack'
 									className='text-center'
-									value={character.meleeAttackModifier.value}
-									onChange={(e) => handleChange('meleeAttackModifier.value', e.target.value)}
+									value={character.meleeAttackModifier}
+									onChange={(e) => handleChange('meleeAttackModifier', e.target.value)}
 								/>
 							)}
 						</Col>
@@ -421,8 +422,8 @@ const CharacterCore = () => {
 								<TextInput
 									label='Melee Damage'
 									className='text-center'
-									value={character.meleeDamageModifier.value}
-									onChange={(e) => handleChange('meleeDamageModifier.value', e.target.value)}
+									value={character.meleeDamageModifier}
+									onChange={(e) => handleChange('meleeDamageModifier', e.target.value)}
 								/>
 							)}
 						</Col>
@@ -440,8 +441,8 @@ const CharacterCore = () => {
 							<TextInput
 								label='Reflex Save'
 								className='text-center'
-								value={character.reflexModifier.value}
-								onChange={(e) => handleChange('reflexModifier.value', e.target.value)}
+								value={character.reflexModifier}
+								onChange={(e) => handleChange('reflexModifier', e.target.value)}
 							/>
 						</Col>
 						<Col lg='2'>
@@ -449,8 +450,8 @@ const CharacterCore = () => {
 								<TextInput
 									label='Missile Attack'
 									className='text-center'
-									value={character.missileAttackModifier.value}
-									onChange={(e) => handleChange('missileAttackModifier.value', e.target.value)}
+									value={character.missileAttackModifier}
+									onChange={(e) => handleChange('missileAttackModifier', e.target.value)}
 								/>
 							)}
 						</Col>
@@ -459,8 +460,8 @@ const CharacterCore = () => {
 								<TextInput
 									label='Missile Damage'
 									className='text-center'
-									value={character.missileDamageModifier.value}
-									onChange={(e) => handleChange('missileDamageModifier.value', e.target.value)}
+									value={character.missileDamageModifier}
+									onChange={(e) => handleChange('missileDamageModifier', e.target.value)}
 								/>
 							)}
 						</Col>
@@ -478,8 +479,8 @@ const CharacterCore = () => {
 							<TextInput
 								label='Fortitude Save'
 								className='text-center'
-								value={character.fortitudeModifier.value}
-								onChange={(e) => handleChange('fortitudeModifier.value', e.target.value)}
+								value={character.fortitudeModifier}
+								onChange={(e) => handleChange('fortitudeModifier', e.target.value)}
 							/>
 						</Col>
 					</Row>
@@ -496,8 +497,8 @@ const CharacterCore = () => {
 							<TextInput
 								label='Willpower Save'
 								className='text-center'
-								value={character.willpowerModifier.value}
-								onChange={(e) => handleChange('willpowerModifier.value', e.target.value)}
+								value={character.willpowerModifier}
+								onChange={(e) => handleChange('willpowerModifier', e.target.value)}
 							/>
 						</Col>
 					</Row>
@@ -514,12 +515,12 @@ const CharacterCore = () => {
 						<Col lg='6'>
 							<SelectInput
 								label='Birth Auger'
-								value={character.birthAuger ? character.birthAuger.number : ''}
-								onChange={(value) => handleChange('birthAuger.value', value)}
+								value={character.birthAuger ? character.birthAuger.key : ''}
+								onChange={(value) => handleChange('birthAuger.key', value)}
 								options={Object.keys(references.birthAugers).map((birthAuger) => {
 									return {
-										value: references.birthAugers[birthAuger].number,
-										label: `${references.birthAugers[birthAuger].number}-${references.birthAugers[birthAuger].auger}`
+										value: references.birthAugers[birthAuger].key,
+										label: `${references.birthAugers[birthAuger].key}-${references.birthAugers[birthAuger].auger}`
 									};
 								})}
 							/>
@@ -541,7 +542,8 @@ const CharacterCore = () => {
 			<Armor characterId={characterId} />
 			<Equipment characterId={characterId} />
 			<Beasts characterId={characterId} />
-			<pre>
+			<Spells characterId={characterId} />
+			{/* <pre>
 				<code>{JSON.stringify(character.fumbleDie, null, 2)}</code>
 			</pre>
 			<pre>
@@ -555,7 +557,7 @@ const CharacterCore = () => {
 					Fumbles & Crits on rolls
 					<br />
 				</code>
-			</pre>
+			</pre> */}
 		</Container>
 	);
 };

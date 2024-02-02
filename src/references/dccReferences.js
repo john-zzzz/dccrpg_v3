@@ -15,6 +15,7 @@ import { fumbleTable } from './dcc/fumbleTable';
 import { attributeModifiers } from './dcc/attributeModifiers';
 import { birthAugers } from './dcc/birthAugers';
 import { armor } from './dcc/armor';
+import { spells } from './dcc/spells';
 
 export const dccReferences = {
 	levels: levels,
@@ -34,5 +35,6 @@ export const dccReferences = {
 	attributeModifiers: attributeModifiers,
 	birthAugers: birthAugers,
 	classLevels: classLevels,
-	armorList: armor
+	armorList: armor,
+	spellList: spells
 };

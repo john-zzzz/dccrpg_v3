@@ -12,7 +12,7 @@ import Leveller from './Leveller';
 const Character = () => {
 	let contentTop = '50px';
 	const leftDrawerInitialWidth = '65px';
-	
+
 	const [showLeveller, setShowLeveller] = useState(false);
 	const [leftDrawer, setLeftDrawer] = useState({ isOpen: false, width: leftDrawerInitialWidth });
 
@@ -23,8 +23,10 @@ const Character = () => {
 		return state.dccCharacters.find((character) => character.id == characterId);
 	});
 
+	character = character && character.character;
+
 	useEffect(() => {
-		document.title = character ? character.name.name : 'Character';
+		document.title = character ? character.name : 'Character';
 	}, [character]);
 
 	const handleFundamentalsExpandCollapse = (width) => {
@@ -43,7 +45,7 @@ const Character = () => {
 
 	return (
 		<div>
-			<Leveller show={showLeveller} onClose={() => handleShowLeveller(false)} characterId={characterId} />
+			{showLeveller && <Leveller show={showLeveller} onClose={() => handleShowLeveller(false)} characterId={characterId} />}
 			<div
 				style={{
 					overflowX: 'hidden',
@@ -92,7 +94,7 @@ const Character = () => {
 				}}>
 				<Container fluid>
 					<CharacterCore />
-				</Container>
+					</Container>
 			</div>
 			<DiceHistory />
 		</div>

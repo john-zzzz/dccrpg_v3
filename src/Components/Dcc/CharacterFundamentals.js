@@ -14,12 +14,14 @@ const CharacterFundamentals = (props) => {
 
 	const params = useParams();
 	let characterId = params.characterId;
-	
+
 	const dispatch = useDispatch();
 	const references = dccReferences;
 	let character = useSelector((state) => {
 		return state.dccCharacters.find((character) => character.id == characterId);
 	});
+
+	character = character && character.character;
 
 	const handleChange = (propertyPath, value) => {
 		dispatch(updateCharacterProperty({ characterId: character.id, propertyPath: propertyPath, value: value }));
@@ -29,26 +31,20 @@ const CharacterFundamentals = (props) => {
 		onShowLeveller(show);
 	};
 
-	//TODO: Move this somewhere generic.
-	const stripRefs = (object) => {
-		let { ref, clone, copy, ...rest } = object;
-		return rest;
-	};
-
 	if (!character) {
 		return <div></div>;
 	}
 
 	return (
-		<div>
+		<div className='mb-2'>
 			<Row className='mt-2'>
 				<Col>
-					<TextInput label='Name' value={character.name.name || ''} onChange={(e) => handleChange('name.name', e.target.value)} />
+					<TextInput label='Name' value={character.name || ''} onChange={(e) => handleChange('name', e.target.value)} />
 				</Col>
 			</Row>
 			<Row className='mt-2'>
 				<Col>
-					<TextInput label='Race' value={character.raceName.value || ''} disabled={true} />
+					<TextInput label='Race' value={character.race.raceName || ''} disabled={true} />
 				</Col>
 			</Row>
 			<Row className='mt-2'>
@@ -59,14 +55,19 @@ const CharacterFundamentals = (props) => {
 						options={Object.keys(references.alignments).map((alignment) => {
 							return { label: references.alignments[alignment].name, value: alignment };
 						})}
-						onChange={(value) => handleChange('alignment.key', value)}
+						onChange={(value) => handleChange('alignment._ref', `alignments.${value}`)}
 					/>
 				</Col>
 			</Row>
 			<Row className='mt-2'>
 				<Col>
 					<InputGroup>
-						<TextInput label='Level' type='number' value={character.levelNumber} onChange={(e) => handleChange('levelNumber', parseInt(e.target.value))} />
+						<TextInput
+							label='Level'
+							type='number'
+							value={character.level.key}
+							onChange={(e) => handleChange('level._ref', `levels.${parseInt(e.target.value)}`)}
+						/>
 						<TextInput label='XP' type='number' value={character.xp} onChange={(e) => handleChange('xp', parseInt(e.target.value))} />
 						<InputGroup.Text style={character.xp >= character.nextLevel.xp ? { color: 'green', fontWeight: 'bold' } : {}}>
 							/{character.nextLevel.xp}
@@ -77,7 +78,7 @@ const CharacterFundamentals = (props) => {
 					</InputGroup>
 				</Col>
 			</Row>
-			{character.levelNumber > 0 && (
+			{character.level.key > 0 && (
 				<Row className='mt-2'>
 					<Col>
 						<SelectInput
@@ -86,25 +87,29 @@ const CharacterFundamentals = (props) => {
 							options={Object.keys(references.classes).map((option) => {
 								return { label: references.classes[option].name, value: option };
 							})}
-							onChange={(value) => handleChange('class', references.classes[value])}
+							onChange={(value) => handleChange('class._ref', `classes.${value}`)}
 						/>
 					</Col>
 				</Row>
 			)}
 			<Row className='mt-2'>
 				<Col>
-					<TextInput label='Occupation' value={character.occupationName.value || ''} onChange={(e) => handleChange('occupationName.value', e.target.value)} />
+					<TextInput
+						label='Occupation'
+						value={character.occupation.occupationName || ''}
+						onChange={(e) => handleChange('occupation.occupationName', e.target.value)}
+					/>
 				</Col>
 			</Row>
 			<Row className='mt-2'>
 				<Col>
-					<TextInput label='Title' value={character.title.value || ''} onChange={(e) => handleChange('title.values.value', e.target.value)} />
+					<TextInput label='Title' value={character.title || ''} onChange={(e) => handleChange('title', e.target.value)} />
 				</Col>
 			</Row>
 			<Row className='mt-2'>
 				<Col>
 					<InputGroup>
-						<TextInput label='Speed' type='text' value={character.speed.value || ''} onChange={(e) => handleChange('speed.value', parseInt(e.target.value))} />
+						<TextInput label='Speed' type='text' value={character.speed || ''} onChange={(e) => handleChange('speed', parseInt(e.target.value))} />
 						<InputGroup.Text>ft</InputGroup.Text>
 					</InputGroup>
 				</Col>
@@ -116,7 +121,7 @@ const CharacterFundamentals = (props) => {
 						isMulti={true}
 						value={
 							character.languages &&
-							Object.keys(stripRefs(character.languages)).map((languageKey) => {
+							Object.keys(character.languages).map((languageKey) => {
 								return character.languages[languageKey].key;
 							})
 						}
@@ -125,7 +130,7 @@ const CharacterFundamentals = (props) => {
 						})}
 						onChange={(value) => {
 							let values = value.map((language) => {
-								return { ref: { propertyPath: ['languages', language] } };
+								return { _ref: `languages.${language}` };
 							});
 
 							handleChange('languages', values);
@@ -133,24 +138,33 @@ const CharacterFundamentals = (props) => {
 					/>
 				</Col>
 			</Row>
+			
 			<Row className='mt-2'>
 				<Col>
-					<DieSelector label='Crit Die' value={character.class.critDie} onChange={(property, value) => handleChange(`critDie.class.${property}`, value)} />
+					<DieSelector
+						label='Crit Die'
+						value={character.class.classLevel && character.class.classLevel.critDie}
+						onChange={(property, value) => handleChange(`class.classLevel.critDie.${property}`, value)}
+					/>
 				</Col>
 			</Row>
 			{character.class.key === 'warrior' && (
 				<>
 					<Row className='mt-2'>
 						<Col>
-							<DieSelector label='Deed Die' value={character.class.deedDie} onChange={(property, value) => handleChange(`class.deedDie.${property}`, value)} />
+							<DieSelector
+								label='Deed Die'
+								value={character.class.classLevel && character.class.classLevel.deedDie}
+								onChange={(property, value) => handleChange(`class.classLevel.deedDie.${property}`, value)}
+							/>
 						</Col>
 					</Row>
 					<Row className='mt-2'>
 						<Col>
 							<TextInput
 								label='Critical Hit Range'
-								value={`${character.class.criticalHitRange.min}+`}
-								onChange={(e) => handleChange('class.criticalHitRange.min', e.target.value)}
+								value={character.class.classLevel && character.class.classLevel.criticalHitRange.min}
+								onChange={(e) => handleChange('class.classLevel.criticalHitRange.min', e.target.value)}
 							/>
 						</Col>
 					</Row>
@@ -158,7 +172,7 @@ const CharacterFundamentals = (props) => {
 						<Col>
 							<SelectInput
 								label='Lucky Weapon'
-								value={character.class.luckyWeapon}
+								value={character.class.classLevel && character.class.luckyWeapon}
 								options={Object.keys(references.weapons).map((option) => {
 									return { label: references.weapons[option].type, value: option };
 								})}
@@ -174,26 +188,22 @@ const CharacterFundamentals = (props) => {
 					<TextInput
 						label='Crit Table'
 						type='number'
-						value={character.class.critTableNumber.value}
-						onChange={(e) => handleChange('critTableNumber.class.value', parseInt(e.target.value))}
+						value={character.class.classLevel && character.class.classLevel.critTableNumber}
+						onChange={(e) => handleChange('class.classLevel.critTableNumber', parseInt(e.target.value))}
 					/>
 				</Col>
 			</Row>
 			<Row className='mt-2'>
 				<Col>
-					<DieSelector
-						label='Fumble Die'
-						value={character.fumbleDie.value}
-						onChange={(property, value) => handleChange(`fumbleDie.value.${property}`, value)}
-					/>
+					<DieSelector label='Fumble Die' value={character.fumbleDie} onChange={(property, value) => handleChange(`fumbleDie.${property}`, value)} />
 				</Col>
 			</Row>
-			{character.characteristics && (Object.keys(character.characteristics).length > 0) && (
-				<Row>
+			{character.characteristics && Object.keys(character.characteristics).length > 0 && (
+				<Row className='mt-2'>
 					<Col>
 						<div className='form-control'>
 							{Object.keys(character.characteristics)
-								.map((characteristicKey, characteristicIndex) => {
+								.map((characteristicKey) => {
 									return character.characteristics[characteristicKey];
 								})
 								.join(', ')}

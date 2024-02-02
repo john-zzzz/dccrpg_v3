@@ -16,39 +16,26 @@ const Armor = (props) => {
 
 	const dispatch = useDispatch();
 	const references = dccReferences;
+
 	let character = useSelector((state) => {
 		return state.dccCharacters.find((character) => character.id == characterId);
 	});
+
+	character = character && character.character;
 
 	const handleChange = (propertyPath, value) => {
 		dispatch(updateCharacterProperty({ characterId: character.id, propertyPath: propertyPath, value: value }));
 	};
 
 	const handleAddArmor = (armor) => {
-		let armorLength = Object.keys(character.armor).length - 1;
-		handleChange(`armor.${armorLength + 1}`, armor);
-	};
-
-	const stripRefs = (object) => {
-		if (!object) return;
-
-		let { ref, clone, copy, ...rest } = object;
-		return rest;
+		let armorLength = character.armor ? Object.keys(character.armor).length - 1 : 0;
+		handleChange(`armor.armor${armorLength + 1}`, armor);
 	};
 
 	const handleDeleteArmor = (armorKey) => {
 		let newArmor = JSON.parse(JSON.stringify(character.armor));
 		delete newArmor[armorKey];
 		handleChange('armor', newArmor);
-	};
-
-	const handleDiceRoll = (name, dice, property) => {
-		let diceCopy = JSON.parse(JSON.stringify(dice));
-		diceCopy.modifier = (dice.modifier && dice.modifier.value) || dice.modifier;
-
-		let rollResult = rollDice(diceCopy, name);
-		dispatch(addDiceRoll(rollResult));
-		property && handleChange(property, rollResult.total);
 	};
 
 	return (
@@ -77,15 +64,19 @@ const Armor = (props) => {
 						</Dropdown.Menu>
 					</Dropdown>
 				</Col>
-				<Col lg='2'></Col>
-				<Col lg='1'>Armor Class</Col>
-				<Col lg='1'>Check</Col>
-				<Col lg='1'>Speed</Col>
-				<Col lg='1'></Col>
-				<Col lg='3'>Fumble Die</Col>
+				{Object.keys(character.armor).length > 0 && (
+					<>
+						<Col lg='2'></Col>
+						<Col lg='1'>Armor Class</Col>
+						<Col lg='1'>Check</Col>
+						<Col lg='1'>Speed</Col>
+						<Col lg='1'></Col>
+						<Col lg='3'>Fumble Die</Col>
+					</>
+				)}
 			</Row>
 			{character.armor &&
-				Object.keys(stripRefs(character.armor)).map((armorKey, armorIndex) => {
+				Object.keys(character.armor).map((armorKey, armorIndex) => {
 					let armor = character.armor[armorKey];
 					return (
 						<Row key={armorIndex} className='pb-1 bb-1'>
@@ -106,8 +97,8 @@ const Armor = (props) => {
 									</Col>
 									<Col lg='4'>
 										<InputGroup>
-										<Form.Control value={armor.name || ''} onChange={(e) => handleChange(`armor.${armorKey}.name`, e.target.value)} />
-										<Button variant='outline-secondary' onClick={(e) => handleChange(`armor.${armorKey}.infoShown`, !armor.infoShown)}>
+											<Form.Control value={armor.name || ''} onChange={(e) => handleChange(`armor.${armorKey}.name`, e.target.value)} />
+											<Button variant='outline-secondary' onClick={(e) => handleChange(`armor.${armorKey}.infoShown`, !armor.infoShown)}>
 												<FontAwesomeIcon icon={faInfoCircle} />
 											</Button>
 										</InputGroup>
@@ -140,18 +131,20 @@ const Armor = (props) => {
 											onChange={(property, value) => handleChange(`armor.${armorKey}.fumbleDie.${property}`, value)}></DieSelector>
 									</Col>
 								</Row>
-								{armor.infoShown && <Row className='mt-1'>
-									<Col lg='1'></Col>
-									<Col lg='6'>
-										<InputGroup>
-											<InputGroup.Text>Notes</InputGroup.Text>
-											<Form.Control value={armor.notes || ''} onChange={(e) => handleChange(`armor.${armorKey}.notes`, e.target.value)} />
-										</InputGroup>
-									</Col>
-									<Col lg='2'>
-										<CoinSelector value={armor.cost} onChange={(property, value) => handleChange(`armor.${armorKey}.cost.${property}`, value)} />
-									</Col>
-								</Row>}
+								{armor.infoShown && (
+									<Row className='mt-1'>
+										<Col lg='1'></Col>
+										<Col lg='6'>
+											<InputGroup>
+												<InputGroup.Text>Notes</InputGroup.Text>
+												<Form.Control value={armor.notes || ''} onChange={(e) => handleChange(`armor.${armorKey}.notes`, e.target.value)} />
+											</InputGroup>
+										</Col>
+										<Col lg='2'>
+											<CoinSelector value={armor.cost} onChange={(property, value) => handleChange(`armor.${armorKey}.cost.${property}`, value)} />
+										</Col>
+									</Row>
+								)}
 							</Col>
 						</Row>
 					);

@@ -17,9 +17,12 @@ const Equipment = (props) => {
 
 	const dispatch = useDispatch();
 	const references = dccReferences;
+
 	let character = useSelector((state) => {
 		return state.dccCharacters.find((character) => character.id == characterId);
 	});
+
+	character = character && character.character;
 
 	const handleChange = (propertyPath, value) => {
 		dispatch(updateCharacterProperty({ characterId: character.id, propertyPath: propertyPath, value: value }));
@@ -30,24 +33,10 @@ const Equipment = (props) => {
 		handleChange(`equipment.${equipmentLength + 1}`, equipment);
 	};
 
-	const stripRefs = (object) => {
-		let { ref, clone, ...rest } = object;
-		return rest;
-	};
-
 	const handleDeleteEquipment = (equipmentKey) => {
 		let newEquipments = JSON.parse(JSON.stringify(character.equipment));
 		delete newEquipments[equipmentKey];
 		handleChange('equipment', newEquipments);
-	};
-
-	const handleDiceRoll = (name, dice, property) => {
-		let diceCopy = JSON.parse(JSON.stringify(dice));
-		diceCopy.modifier = (dice.modifier && dice.modifier.value) || dice.modifier;
-
-		let rollResult = rollDice(diceCopy, name);
-		dispatch(addDiceRoll(rollResult));
-		property && handleChange(property, rollResult.total);
 	};
 
 	return (
@@ -76,57 +65,59 @@ const Equipment = (props) => {
 						</Dropdown.Menu>
 					</Dropdown>
 				</Col>
-				<Col lg='2'></Col>
-				<Col lg='1'>Qty</Col>
-				<Col lg='2'>Cost</Col>
-				<Col lg='4'>Notes</Col>
+				{Object.keys(character.armor).length > 0 && (
+					<>
+						<Col lg='2'></Col>
+						<Col lg='1'>Qty</Col>
+						<Col lg='2'>Cost</Col>
+						<Col lg='4'>Notes</Col>
+					</>
+				)}
 			</Row>
-			{character.equipment && Object.keys(stripRefs(character.equipment)).map((equipmentKey, equipmentIndex) => {
-				let equipment = character.equipment[equipmentKey];
-				return (
-					<Row key={equipmentIndex} className='pb-1 bb-1'>
-						<Col>
-							<Row className='mt-1'>
-								<Col lg='1'>
-									<ButtonGroup>
-										<Button variant='outline-danger' onClick={() => handleDeleteEquipment(equipmentKey)}>
-											<FontAwesomeIcon icon={faTrash} />
-										</Button>
-										{/* <Button
+			{character.equipment &&
+				Object.keys(character.equipment).map((equipmentKey, equipmentIndex) => {
+					let equipment = character.equipment[equipmentKey];
+					return (
+						<Row key={equipmentIndex} className='pb-1 bb-1'>
+							<Col>
+								<Row className='mt-1'>
+									<Col lg='1'>
+										<ButtonGroup>
+											<Button variant='outline-danger' onClick={() => handleDeleteEquipment(equipmentKey)}>
+												<FontAwesomeIcon icon={faTrash} />
+											</Button>
+											{/* <Button
 											variant={equipment.equipped ? 'outline-primary' : 'outline-secondary'}
 											title='equipped'
 											onClick={(e) => handleChange(`equipment.${equipmentKey}.equipped`, !equipment.equipped)}>
 											<FontAwesomeIcon icon={faShieldAlt} />
 										</Button> */}
-									</ButtonGroup>
-								</Col>
-								<Col lg='4'>
-									<Form.Control value={equipment.name || ''} onChange={(e) => handleChange(`equipment.${equipmentKey}.name`, e.target.value)} />
-								</Col>
-								<Col lg='1'>
-									<Form.Control
-										value={equipment.quantity || 1}
-										type='number'
-										onChange={(e) => handleChange(`equipment.${equipmentKey}.quantity`, e.target.value)}
-									/>
-								</Col>
-								<Col lg='2'>
-									<CoinSelector
-										value={equipment.cost}
-										onChange={(propertyPath, value) => handleChange(`equipment.${equipmentKey}.cost.${propertyPath}`, value)}
-									/>
-								</Col>
-                                <Col lg='4'>
-                                <Form.Control
-										value={equipment.quantity || ''}
-										onChange={(e) => handleChange(`equipment.${equipmentKey}.notes`, e.target.value)}
-									/>
-								</Col>
-							</Row>
-						</Col>
-					</Row>
-				);
-			})}
+										</ButtonGroup>
+									</Col>
+									<Col lg='4'>
+										<Form.Control value={equipment.name || ''} onChange={(e) => handleChange(`equipment.${equipmentKey}.name`, e.target.value)} />
+									</Col>
+									<Col lg='1'>
+										<Form.Control
+											value={equipment.quantity || 1}
+											type='number'
+											onChange={(e) => handleChange(`equipment.${equipmentKey}.quantity`, e.target.value)}
+										/>
+									</Col>
+									<Col lg='2'>
+										<CoinSelector
+											value={equipment.cost}
+											onChange={(propertyPath, value) => handleChange(`equipment.${equipmentKey}.cost.${propertyPath}`, value)}
+										/>
+									</Col>
+									<Col lg='4'>
+										<Form.Control value={equipment.notes || ''} onChange={(e) => handleChange(`equipment.${equipmentKey}.notes`, e.target.value)} />
+									</Col>
+								</Row>
+							</Col>
+						</Row>
+					);
+				})}
 		</>
 	);
 };

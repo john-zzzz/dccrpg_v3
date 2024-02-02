@@ -17,22 +17,20 @@ const Weapons = (props) => {
 
 	const dispatch = useDispatch();
 	const references = dccReferences;
+
 	let character = useSelector((state) => {
 		return state.dccCharacters.find((character) => character.id == characterId);
 	});
+
+	character = character && character.character;
 
 	const handleChange = (propertyPath, value) => {
 		dispatch(updateCharacterProperty({ characterId: character.id, propertyPath: propertyPath, value: value }));
 	};
 
 	const handleAddWeapon = (weapon) => {
-		let weaponsLength = Object.keys(character.weapons).length - 1;
-		handleChange(`weapons.${weaponsLength + 1}`, weapon);
-	};
-
-	const stripRefs = (object) => {
-		let { ref, clone, ...rest } = object;
-		return rest;
+		let weaponsLength = character.weapons ? Object.keys(character.weapons).length - 1 : 0;
+		handleChange(`weapons.weapon${weaponsLength + 1}`, weapon);
 	};
 
 	const handleDeleteWeapon = (weaponKey) => {
@@ -56,9 +54,9 @@ const Weapons = (props) => {
 		property && handleChange(property, rollResult.total);
 	};
 
-	const handleAttackDiceRoll = (weaponIndex, ammunitionIndex, rangeKey) => {
-		let weapon = JSON.parse(JSON.stringify(character.weapons[weaponIndex]));
-		let ammunition = weapon.ammunition && weapon.ammunition[ammunitionIndex];
+	const handleAttackDiceRoll = (weaponKey, ammunitionKey, rangeKey) => {
+		let weapon = JSON.parse(JSON.stringify(character.weapons[weaponKey]));
+		let ammunition = weapon.ammunition && weapon.ammunition[ammunitionKey];
 		let range = undefined;
 
 		if (ammunition && ammunition.ranges) {
@@ -90,13 +88,14 @@ const Weapons = (props) => {
 
 		if (ammunition) {
 			damageDieName = `${damageDieName} ${ammunition.name || ammunition.type}`;
-			handleChange(`weapons.${weaponIndex}.ammunition.${ammunitionIndex}.quantity`, ammunition.quantity - 1);
+			handleChange(`weapons.${weaponKey}.ammunition.${ammunitionKey}.quantity`, ammunition.quantity - 1);
 		}
 
 		handleDiceRoll(
-			<>
-				{`${damageDieName} Damage`} {isLucky && <FontAwesomeIcon style={{ color: '#198754' }} title='Lucky' icon={faClover} />}
-			</>,
+			`${damageDieName} Damage`,
+			// <>
+			// 	{`${damageDieName} Damage`} {isLucky && <FontAwesomeIcon style={{ color: '#198754' }} title='Lucky' icon={faClover} />}
+			// </>,
 			damageDice
 		);
 	};
@@ -108,7 +107,7 @@ const Weapons = (props) => {
 	};
 	return (
 		<>
-			<Row className='bt-1 pt-1 align-items-center'>
+			<Row className='bt-1 pb-1 pt-1 align-items-center'>
 				<Col lg='1'>
 					<b>Weapons</b>
 				</Col>
@@ -129,13 +128,17 @@ const Weapons = (props) => {
 						</Dropdown.Menu>
 					</Dropdown>
 				</Col>
-				<Col lg='2'></Col>
-				<Col lg='1'>Qty</Col>
-				<Col lg='3'>Damage</Col>
-				<Col lg='3'>Attack</Col>
+				{Object.keys(character.weapons).length > 0 && (
+					<>
+						<Col lg='2'></Col>
+						<Col lg='1'>Qty</Col>
+						<Col lg='3'>Damage</Col>
+						<Col lg='3'>Attack</Col>
+					</>
+				)}
 			</Row>
 			{character.weapons &&
-				Object.keys(stripRefs(character.weapons)).map((weaponKey, weaponIndex) => {
+				Object.keys(character.weapons).map((weaponKey, weaponIndex) => {
 					let weapon = character.weapons[weaponKey];
 					return (
 						<Row key={weaponIndex} className='pb-1 bb-1'>
@@ -224,13 +227,13 @@ const Weapons = (props) => {
 												{weapon.ranges ? (
 													Object.keys(weapon.ranges).map((rangeKey, rangeIndex) => {
 														return (
-															<Button key={rangeIndex} variant='outline-secondary' onClick={() => handleAttackDiceRoll(weaponIndex, undefined, rangeKey)}>
+															<Button key={rangeIndex} variant='outline-secondary' onClick={() => handleAttackDiceRoll(weaponKey, undefined, rangeKey)}>
 																<img src={sword} width='20px' /> {weapon.ranges[rangeKey].range}ft
 															</Button>
 														);
 													})
 												) : (
-													<Button variant='outline-secondary' onClick={() => handleAttackDiceRoll(weaponIndex)}>
+													<Button variant='outline-secondary' onClick={() => handleAttackDiceRoll(weaponKey)}>
 														<img src={sword} width='20px' />
 													</Button>
 												)}
@@ -362,7 +365,7 @@ const Weapons = (props) => {
 																		<Button
 																			key={rangeIndex}
 																			variant='outline-secondary'
-																			onClick={() => handleAttackDiceRoll(weaponIndex, ammunitionIndex, rangeKey)}
+																			onClick={() => handleAttackDiceRoll(weaponKey, ammunitionKey, rangeKey)}
 																			// onClick={() =>
 																			// 	handleDiceRoll(`${weapon.name || weapon.type} ${ammunition.name || ammunition.type} Damage`, {
 																			// 		number: ammunition.damageDie.number,

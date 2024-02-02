@@ -4,7 +4,7 @@ export const classLevels = {
 		0: {
 			key: 0,
 			actionDice: { die1: { number: 1, die: dice.d20 } },
-			critDie: { number: 1, die: dice.d20 },
+			critDie: { number: 1, die: dice.d4 },
 			critTableNumber: 1
 		}
 	},
@@ -26,8 +26,8 @@ export const classLevels = {
 					number: 1,
 					die: dice.d20,
 					ranges: [
-						{ min: { clone: { propertyPath: 'class.criticalHitRange.min' } }, name: 'Critical Hit!', variant: 'success' },
-						{ max: 15, name: 'Fumble!', variant: 'failure'}
+						{ min: { _ref: 'class.criticalHitRange.min' }, name: 'Critical Hit!', variant: 'success' },
+						{ max: 1, name: 'Fumble!', variant: 'failure' }
 					]
 				}
 			}
@@ -143,16 +143,14 @@ export const classes = {
 	none: {
 		key: 'none',
 		name: 'None',
-		classLevel: { ref: { propertyPath: ['classLevels', 'warrior', { ref: { propertyPath: 'levelNumber' } }] } },
-		critDie: { clone: { propertyPath: ['classLevels', 'none', { ref: { propertyPath: 'levelNumber' } }, 'critDie'] } },
-		critTableNumber: { clone: { propertyPath: ['classLevels', 'none', { ref: { propertyPath: 'levelNumber' } }, 'critTableNumber'] } },
-		actionDice: { clone: { propertyPath: ['classLevels', 'none', { ref: { propertyPath: 'levelNumber' } }, 'actionDice'] } }
+		classLevel: { _default: { _ref: ['classLevels', 'none', { _ref: 'level.key' }] } },
+		hitDice: { number: 1, die: dice.d4 },
 	},
 	warrior: {
 		key: 'warrior',
 		name: 'Warrior',
 		hitDice: { number: 1, die: dice.d12 },
-		classInititiveModifier: { ref: { propertyPath: 'levelNumber' } },
+		classInititiveModifier: { _ref: 'level.key' },
 		trainedWeapons: [
 			'battleaxe',
 			'club',
@@ -175,15 +173,7 @@ export const classes = {
 		],
 		militantOrder: '',
 		luckyWeapon: '',
-		classLevel: { ref: { propertyPath: ['classLevels', 'warrior', { ref: { propertyPath: 'levelNumber' } }] } },
-		critDie: { clone: { propertyPath: 'class.classLevel.critDie' } },
-		critTableNumber: { clone: { propertyPath: 'class.classLevel.critTableNumber' } },
-		reflexModifier: { clone: { propertyPath: 'class.classLevel.reflexModifier' } },
-		fortitudeModifier: { clone: { propertyPath: 'class.classLevel.fortitudeModifier' } },
-		willPowerModifier: { clone: { propertyPath: 'class.classLevel.willPowerModifier' } },
-		deedDie: { clone: { propertyPath: 'class.classLevel.deedDie' } },
-		criticalHitRange: { clone: { propertyPath: 'class.classLevel.criticalHitRange' } },
-		actionDice: { clone: { propertyPath: 'class.classLevel.actionDice' } }
+		classLevel: { _default: { _ref: ['classLevels', 'warrior', { _ref: 'level.key' }] } }
 	},
 	cleric: { key: 'cleric', name: 'Cleric' },
 	wizard: { key: 'wizard', name: 'Wizard' }

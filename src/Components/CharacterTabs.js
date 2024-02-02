@@ -7,10 +7,13 @@ import { addCharacter, generateCharacter } from '../slices/dcc/charactersSlice';
 import { Link, Outlet } from 'react-router-dom';
 
 const CharacterTabs = () => {
-	const characters = useSelector((state) => {
+	let characters = useSelector((state) => {
 		return state.dccCharacters;
 	});
 
+	characters = characters  &&characters.map((character) => {
+		return character.character;
+	});
 
 	const dispatch = useDispatch();
 
@@ -32,8 +35,8 @@ const CharacterTabs = () => {
 					characters.map((character, characterIndex) => {
 						return (
 							<Nav.Item key={characterIndex}>
-								<Nav.Link as={Link} to={`/characters/${character.id}?${character.name.name}`} eventKey={character.id}>
-									{character.name.name || '(No Name)'}
+								<Nav.Link as={Link} to={`/characters/${character.id}?${character.name}`} eventKey={character.id}>
+									{character.name || '(No Name)'}
 								</Nav.Link>
 							</Nav.Item>
 						);

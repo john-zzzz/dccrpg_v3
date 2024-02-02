@@ -16,9 +16,12 @@ const Beasts = (props) => {
 
 	const dispatch = useDispatch();
 	const references = dccReferences;
+
 	let character = useSelector((state) => {
 		return state.dccCharacters.find((character) => character.id == characterId);
 	});
+
+	character = character && character.character;
 
 	const handleChange = (propertyPath, value) => {
 		dispatch(updateCharacterProperty({ characterId: character.id, propertyPath: propertyPath, value: value }));
@@ -27,11 +30,6 @@ const Beasts = (props) => {
 	const handleAddBeast = (beast) => {
 		let beastLength = Object.keys(character.beasts).length - 1;
 		handleChange(`beasts.${beastLength + 1}`, beast);
-	};
-
-	const stripRefs = (object) => {
-		let { ref, clone, copy, ...rest } = object;
-		return rest;
 	};
 
 	const handleDeleteBeast = (beastKey) => {
@@ -51,7 +49,7 @@ const Beasts = (props) => {
 
 	return (
 		<>
-			<Row className='bt-1 pt-1 align-items-center'>
+			<Row className='bt-1 mt-1 pt-1 align-items-center'>
 				<Col lg='1'>
 					<b>Beasts</b>
 				</Col>
@@ -75,15 +73,18 @@ const Beasts = (props) => {
 						</Dropdown.Menu>
 					</Dropdown>
 				</Col>
-				<Col lg='2'>Hit Points</Col>
-				<Col lg='1'>AC</Col>
-				<Col lg='2'>Inititive</Col>
-				<Col lg='2'>Action Dice</Col>
+				{Object.keys(character.beasts).length > 0 && (
+					<>
+						<Col lg='2'>Hit Points</Col>
+						<Col lg='1'>AC</Col>
+						<Col lg='2'>Inititive</Col>
+						<Col lg='2'>Action Dice</Col>
+					</>
+				)}
 			</Row>
 
-
-			{stripRefs(character.beasts) &&
-				Object.keys(stripRefs(character.beasts)).map((beastKey, beastIndex) => {
+			{character.beasts &&
+				Object.keys(character.beasts).map((beastKey, beastIndex) => {
 					let beast = character.beasts[beastKey];
 					return (
 						<Row key={beastIndex} className='pb-1 bb-1'>

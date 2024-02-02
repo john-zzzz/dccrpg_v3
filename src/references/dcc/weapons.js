@@ -22,7 +22,7 @@ export const weapons = {
 		type: 'Blowgun',
 		requiresAmmunition: true,
 		ammunition: {
-			0: {
+			ammunition0: {
 				type: 'Needle',
 				cost: { number: 5, coinType: coinTypes.copper },
 				ranges: {
@@ -40,13 +40,13 @@ export const weapons = {
 		damageDie: { number: 1, die: dice.d4 },
 		cost: { number: 3, coinType: coinTypes.gold }
 	},
-	crowsbow: {
+	crossbow: {
 		key: 'crossbow',
 		type: 'Crossbow',
 		requiresAmmunition: true,
 		cost: { number: 30, coinType: coinTypes.gold },
 		ammunition: {
-			0: {
+			ammunition0: {
 				type: 'Quarrel',
 				cost: { number: 33, coinType: coinTypes.copper },
 				ranges: {
@@ -128,7 +128,7 @@ export const weapons = {
 		cost: { number: 40, coinType: coinTypes.gold },
 		footNotes: 'Two-handed weapon. Characters using two-handed weapons use a d16 on initiative checks.',
 		ammunition: {
-			0: {
+			ammunition0: {
 				type: 'Arrow',
 				damageDie: { number: 1, die: dice.d6 },
 				cost: { number: 25, coinType: coinTypes.copper },
@@ -166,7 +166,7 @@ export const weapons = {
 		cost: { number: 25, coinType: coinTypes.gold },
 		footNotes: 'Two-handed weapon. Characters using two-handed weapons use a d16 on initiative checks.',
 		ammunition: {
-			0: {
+			ammunition0: {
 				type: 'Arrow',
 				damageDie: { number: 1, die: dice.d6 },
 				cost: { number: 25, coinType: coinTypes.copper },
@@ -192,7 +192,7 @@ export const weapons = {
 		footNotes:
 			'These weapons are particularly effective when used	with the element of surprise. A thief who succeeds in a backstab attempt with one of these weapons uses the second damage value listed. All other classes and all other thief attacks use the first value.',
 		ammunition: {
-			0: {
+			ammunition0: {
 				type: 'Sling Stone',
 				damageDie: { number: 1, die: dice.d4 },
 				cost: { number: 3, coinType: coinTypes.copper },

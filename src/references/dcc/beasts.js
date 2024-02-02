@@ -11,14 +11,14 @@ export const beasts = {
 		inititiveModifier: 1,
 		hitPoints: {
 			max: rollDice({ number: 1, die: dice.d8, modifier: 2 }).total,
-			current: { copy: { propertyPath: 'hitPoints.max' } }//TODO: It pulled this from character because it's the top 
+			current: { _ref: 'hitPoints.max' }//TODO: It pulled this from character because it's the top 
 			//level object... need a "local" propertyPath, maybe someting like: propertyPath: '.hitPoints.max' (note the ".")
 		},
 		actionDie: { number: 1, die: dice.d20 },
 		fortitudeModifier: 2,
 		reflexModifier: 3,
 		willpowerModifier: -1,
-		alignment: { clone: { propertyPath: 'alignments.neutral' } },
+		alignment: { _ref: 'alignments.neutral' } ,
 		armorClass: 11,
 		attacks: { hoof: { key: 'hoof', name: 'Hoof', damage: { number: 1, die: dice.d2, modifier: -2 } } },
 		cost: { number: 15, coinType: coinTypes.gold }
