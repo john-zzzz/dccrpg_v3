@@ -65,7 +65,7 @@ const Equipment = (props) => {
 						</Dropdown.Menu>
 					</Dropdown>
 				</Col>
-				{Object.keys(character.armor).length > 0 && (
+				{Object.keys(character.equipment).length > 0 && (
 					<>
 						<Col lg='2'></Col>
 						<Col lg='1'>Qty</Col>

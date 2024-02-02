@@ -49,7 +49,7 @@ const Beasts = (props) => {
 
 	return (
 		<>
-			<Row className='bt-1 mt-1 pt-1 align-items-center'>
+			<Row className='bt-1 pt-1 align-items-center'>
 				<Col lg='1'>
 					<b>Beasts</b>
 				</Col>

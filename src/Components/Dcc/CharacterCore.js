@@ -538,26 +538,42 @@ const CharacterCore = () => {
 					</Row>
 				</Col>
 			</Row>
+			
 			<Weapons characterId={characterId} />
 			<Armor characterId={characterId} />
 			<Equipment characterId={characterId} />
 			<Beasts characterId={characterId} />
 			<Spells characterId={characterId} />
+			<Row className='pt-2'>
+				<Col>
+					<Form.Control as='textarea' rows='10' placeholder='Notes' value={character.notes || ''} onChange={(e) => handleChange('notes', e.target.value)} />
+				</Col>
+			</Row>
 			{/* <pre>
 				<code>{JSON.stringify(character.fumbleDie, null, 2)}</code>
-			</pre>
+			</pre> */}
 			<pre>
 				<code>
 					TODO: <br />
 					Birth Auger stat affects <br />
-					Beasts inheriting HP from character (because of the ref to the top level object...) <br />
-					Save to localstorage Death <br />
-					Leveling up <br />
 					Money <br />
-					Fumbles & Crits on rolls
+					Add Trained Weapons list to Fundamentals
+					<br />
+					SelectInput height
+					<br />
+					Show Spell History
+					<br />
+					Patrons
+					<br />
+					Patrons Taints for spell failures
+					<br />
+					BUGS:
+					<br />
+					Beasts inheriting HP from character (because of the ref to the top level object...) <br />
+					Title = [object Object] for Level 0<br />
 					<br />
 				</code>
-			</pre> */}
+			</pre>
 		</Container>
 	);
 };

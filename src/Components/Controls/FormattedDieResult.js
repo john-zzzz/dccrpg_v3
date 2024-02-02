@@ -44,14 +44,15 @@ const FormattedDieResult = (props) => {
 			{die.name}
 			{die.name && ': '}
 			{diceCopy.number}d{diceCopy.die}
-			{diceCopy.rolls && <>={die.rolls.join('+')}</>}
 			{!isNaN(diceCopy.modifier) && diceCopy.modifier !== 0 && (
 				<>
 					{diceCopy.modifier > -1 ? '+' : ''}
 					{diceCopy.modifier}
 				</>
-			)}{' '}
-			{rangeResult.name}
+			)}
+
+			{diceCopy.rolls && <>={die.total}</>}
+			{rangeResult.name && ` (${rangeResult.name})`}
 		</div>
 	);
 };

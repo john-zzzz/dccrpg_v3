@@ -1,10 +1,7 @@
-import { current } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-// import { getValues, setValue } from '../../objectEvaluator/evaluator';
 import { rollDice, dice } from '../diceSlice';
 import { dccReferences } from '../../references/dccReferences';
 import { deepCopy, evaluate, setValue } from '../../objectEvaluator/evaluator2';
-import { startingCharacters } from '../../references/dcc/startingCharacters';
 
 export const generateCharacter = () => {
 	let references = dccReferences;
@@ -64,6 +61,7 @@ export const generateCharacter = () => {
 		trainedWeapons: { _ref: 'race.trainedWeapons' },
 		occupationName: { _ref: 'occupation.occupationName' },
 		weapons: { _ref: 'occupation.weapons' },
+		spells: {},
 		armor: { _ref: 'occupation.armor' },
 		equipment: { _ref: 'occupation.equipment' },
 		beasts: { _ref: 'occupation.beasts' },
@@ -95,21 +93,35 @@ export const generateCharacter = () => {
 	return { id: characterModel.id, model: characterModel, character: character };
 };
 
+const saveCharacters = (characters) => {
+	localStorage.setItem('characters', JSON.stringify(characters));
+};
+
+const loadCharacters = () => {
+	let storedCharacters = localStorage.getItem('characters') || '[]';
+	return JSON.parse(storedCharacters);
+};
+
 const dccCharactersSlice = createSlice({
 	name: 'dccCharacters',
-	initialState: [],
+	initialState: (() => {
+		return loadCharacters();
+	}),
 
 	reducers: {
 		addCharacter: (state, action) => {
 			state.push(action.payload);
+			saveCharacters(state);
 		},
 		removeCharacter: (state, action) => {
 			state = state.filter((character) => character.id !== action.payload.id);
+			saveCharacters(state);
 		},
 		updateCharacter: (state, action) => {
 			const characterIndex = state.findIndex((character) => character.id === action.payload.id);
 			let newCharacter = evaluate(deepCopy(action.payload), JSON.parse(JSON.stringify(dccReferences)));
 			state[characterIndex] = { id: action.payload.id, model: action.payload, character: newCharacter };
+			saveCharacters(state);
 		},
 		updateCharacterProperty: (state, action) => {
 			const characterIndex = state.findIndex((character) => character.id === action.payload.characterId);
@@ -123,6 +135,7 @@ const dccCharactersSlice = createSlice({
 			let newCharacter = evaluate(deepCopy(newModel), deepCopy(dccReferences));
 
 			state[characterIndex] = { id: newModel.id, model: newModel, character: newCharacter };
+			saveCharacters(state);
 		}
 	}
 });

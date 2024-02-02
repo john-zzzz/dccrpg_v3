@@ -16,6 +16,8 @@ import { attributeModifiers } from './dcc/attributeModifiers';
 import { birthAugers } from './dcc/birthAugers';
 import { armor } from './dcc/armor';
 import { spells } from './dcc/spells';
+import { timeUnits } from './dcc/timeUnits';
+import { patrons } from './dcc/patrons';
 
 export const dccReferences = {
 	levels: levels,
@@ -36,5 +38,7 @@ export const dccReferences = {
 	birthAugers: birthAugers,
 	classLevels: classLevels,
 	armorList: armor,
-	spellList: spells
+	spellList: spells,
+	timeUnits: timeUnits,
+	patronList: patrons
 };
