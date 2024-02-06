@@ -20,6 +20,7 @@ export const equipment = {
 	pole: { key: 'pole', name: 'Pole, 10-foot', cost: { number: 10, coinType: coinTypes.copper } },
 	ration: { key: 'ration', name: 'Rations, per day', cost: { number: 5, coinType: coinTypes.copper } },
 	rope50ft: { key: 'rope50ft', name: "Rope, 50'", cost: { number: 25, coinType: coinTypes.copper } },
+	rope50ft: { key: 'rope100ft', name: "Rope, 100'", cost: { number: 50, coinType: coinTypes.copper } },
 	largeSack: { key: 'largeSack', name: 'Sack, large', cost: { number: 12, coinType: coinTypes.copper } },
 	smallSack: { key: 'smallSack', name: 'Sack, small', cost: { number: 8, coinType: coinTypes.copper } },
 	thievesTools: { key: 'thievesTool', name: "Thieve's tools", cost: { number: 25, coinType: coinTypes.gold } },

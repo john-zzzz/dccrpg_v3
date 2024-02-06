@@ -22,6 +22,14 @@ export const beasts = {
 		armorClass: 11,
 		attacks: { hoof: { key: 'hoof', name: 'Hoof', damage: { number: 1, die: dice.d2, modifier: -2 } } },
 		cost: { number: 15, coinType: coinTypes.gold }
+	},
+	hen: {
+		key: 'hen',
+		type: 'Hen',
+	},
+	dog: {
+		key: 'dog',
+		type: 'Dog',
 	}
 };
 

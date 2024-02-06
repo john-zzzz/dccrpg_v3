@@ -6,7 +6,15 @@ import { updateCharacterProperty } from '../../slices/dcc/charactersSlice';
 import SelectInput from '../Controls/SelectInput';
 import { dccReferences } from '../../references/dccReferences';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusMinus, faShieldAlt, faArrowDownWideShort, faDiceD20, faHeartPulse, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import {
+	faPlusMinus,
+	faShieldAlt,
+	faArrowDownWideShort,
+	faDiceD20,
+	faHeartPulse,
+	faMinus,
+	faPlus,
+} from '@fortawesome/free-solid-svg-icons';
 import DieSelector from '../Controls/DieSelector';
 import { useState } from 'react';
 import { addDiceRoll, dice, formatDieResult, rollDice } from '../../slices/diceSlice';
@@ -132,7 +140,7 @@ const CharacterCore = () => {
 			name: 'Critical Hit',
 			roll: rollResult,
 			show: true,
-			result: references.critTables[character.class.classLevel.critTableNumber][rollResult.total]
+			result: references.critTables[character.class.classLevel.critTableNumber][rollResult.total],
 		});
 		dispatch(addDiceRoll(rollResult));
 	};
@@ -142,7 +150,7 @@ const CharacterCore = () => {
 			name: 'Fumble',
 			roll: rollResult,
 			show: true,
-			result: references.fumbleTable[rollResult.total]
+			result: references.fumbleTable[rollResult.total],
 		});
 		dispatch(addDiceRoll(rollResult));
 	};
@@ -173,7 +181,11 @@ const CharacterCore = () => {
 								return (
 									<Row key={rollIndex}>
 										<Col>
-											<Button variant='outline-secondary' onClick={() => handleDiceRoll(showModal.result.rolls.name || showModal.name, showModal.result.rolls)}>
+											<Button
+												variant='outline-secondary'
+												onClick={() =>
+													handleDiceRoll(showModal.result.rolls.name || showModal.name, showModal.result.rolls)
+												}>
 												<FontAwesomeIcon icon={faDiceD20} />
 												<FormattedDieResult die={roll} />
 											</Button>
@@ -197,7 +209,14 @@ const CharacterCore = () => {
 					<Row className='pb-2'>
 						<Col xs='6'>
 							<div className='w-100' style={{ border: '1px solid black', height: '110px', borderRadius: '4px' }}>
-								<div style={{ paddingLeft: '4px', borderBottom: '1px solid black', textWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+								<div
+									style={{
+										paddingLeft: '4px',
+										borderBottom: '1px solid black',
+										textWrap: 'nowrap',
+										overflow: 'hidden',
+										textOverflow: 'ellipsis',
+									}}>
 									<FontAwesomeIcon icon={faShieldAlt} /> Armor Class
 								</div>
 								<div>
@@ -213,7 +232,7 @@ const CharacterCore = () => {
 											border: '0px',
 											padding: '0px',
 											margin: '0px',
-											marginBottom: '-4px'
+											marginBottom: '-4px',
 										}}
 									/>
 								</div>
@@ -224,7 +243,7 @@ const CharacterCore = () => {
 											borderTop: '1px solid black',
 											height: '29px',
 											textAlign: 'center',
-											marginTop: '4px'
+											marginTop: '4px',
 										}}>
 										Base: {character.armorClass.base}
 									</div>
@@ -250,7 +269,7 @@ const CharacterCore = () => {
 											border: '0px',
 											padding: '0px',
 											margin: '0px',
-											marginBottom: '-4px'
+											marginBottom: '-4px',
 										}}
 									/>
 								</div>
@@ -262,7 +281,7 @@ const CharacterCore = () => {
 											height: '29px',
 											cursor: 'pointer',
 											textAlign: 'center',
-											marginTop: '4px'
+											marginTop: '4px',
 										}}
 										onClick={() => handleDiceRoll('Inititive', character.inititive.dice, 'inititive.current')}>
 										<FontAwesomeIcon icon={faDiceD20} /> {formatDieResult(character.inititive.dice)}
@@ -273,7 +292,9 @@ const CharacterCore = () => {
 					</Row>
 					<Row className='pb-2'>
 						<Col xs='12'>
-							<div className='w-100' style={{ backgroundColor: 'white', border: '1px solid black', height: '110px', borderRadius: '4px' }}>
+							<div
+								className='w-100'
+								style={{ backgroundColor: 'white', border: '1px solid black', height: '110px', borderRadius: '4px' }}>
 								<div style={{ paddingLeft: '4px', borderBottom: '1px solid black' }}>
 									<FontAwesomeIcon icon={faHeartPulse} /> Hit Points
 								</div>
@@ -291,7 +312,7 @@ const CharacterCore = () => {
 												border: '0px',
 												padding: '0px',
 												margin: '0px',
-												marginBottom: '-4px'
+												marginBottom: '-4px',
 											}}
 										/>
 									</Col>
@@ -316,7 +337,7 @@ const CharacterCore = () => {
 									style={{
 										borderTop: '1px solid black',
 										height: '29px',
-										marginTop: '4px'
+										marginTop: '4px',
 									}}>
 									<Row>
 										<Col xs='2' className='m-1'>
@@ -330,7 +351,7 @@ const CharacterCore = () => {
 													borderBottom: '1px solid black',
 													margin: '0px',
 													padding: '0px',
-													width: '100%'
+													width: '100%',
 												}}
 												value={character.hitPoints.max || 0}
 												onChange={(e) => handleChange('hitPoints.max', e.target.value)}
@@ -347,28 +368,31 @@ const CharacterCore = () => {
 								<label style={{ transform: 'scale(.85)' }}>Action Dice</label>
 								<br />
 								<Row>
-									{Object.keys(character.class.classLevel.actionDice).map((actionDie, actionDieIndex) => {
-										return (
-											<Col lg='6' key={actionDieIndex} className='mt-1'>
-												<Button
-													size='sm'
-													variant='outline-secondary'
-													key={actionDieIndex}
-													className='w-100'
-													onClick={() => {
-														let actionDice = [{ name: 'Action Die', ...character.class.classLevel.actionDice[actionDie] }];
-														if (character.class.classLevel.deedDie) {
-															actionDice[0].name = 'Action Die';
-															actionDice.push({ name: 'Deed Die', ...character.class.classLevel.deedDie });
-														}
-														handleActionDiceRoll(`Action Die ${actionDieIndex + 1}`, actionDice);
-													}}>
-													<FontAwesomeIcon icon={faDiceD20} />
-													<FormattedDieResult die={character.class.classLevel.actionDice[actionDie]} />
-												</Button>
-											</Col>
-										);
-									})}
+									{character.class.classLevel &&
+										Object.keys(character.class.classLevel.actionDice).map((actionDie, actionDieIndex) => {
+											return (
+												<Col lg='6' key={actionDieIndex} className='mt-1'>
+													<Button
+														size='sm'
+														variant='outline-secondary'
+														key={actionDieIndex}
+														className='w-100'
+														onClick={() => {
+															let actionDice = [
+																{ name: 'Action Die', ...character.class.classLevel.actionDice[actionDie] },
+															];
+															if (character.class.classLevel.deedDie) {
+																actionDice[0].name = 'Action Die';
+																actionDice.push({ name: 'Deed Die', ...character.class.classLevel.deedDie });
+															}
+															handleActionDiceRoll(`Action Die ${actionDieIndex + 1}`, actionDice);
+														}}>
+														<FontAwesomeIcon icon={faDiceD20} />
+														<FormattedDieResult die={character.class.classLevel.actionDice[actionDie]} />
+													</Button>
+												</Col>
+											);
+										})}
 								</Row>
 							</div>
 						</Col>
@@ -386,7 +410,11 @@ const CharacterCore = () => {
 						</Col>
 					</Row>
 					<Row>
-						<Col>{character.class.key === 'warrior' && <WarriorCore character={character} onRollDice={handleDiceRoll} onChange={handleChange} />}</Col>
+						<Col>
+							{character.class.key === 'warrior' && (
+								<WarriorCore character={character} onRollDice={handleDiceRoll} onChange={handleChange} />
+							)}
+						</Col>
 					</Row>
 				</Col>
 				<Col lg='9'>
@@ -520,7 +548,7 @@ const CharacterCore = () => {
 								options={Object.keys(references.birthAugers).map((birthAuger) => {
 									return {
 										value: references.birthAugers[birthAuger].key,
-										label: `${references.birthAugers[birthAuger].key}-${references.birthAugers[birthAuger].auger}`
+										label: `${references.birthAugers[birthAuger].key}-${references.birthAugers[birthAuger].auger}`,
 									};
 								})}
 							/>
@@ -538,7 +566,7 @@ const CharacterCore = () => {
 					</Row>
 				</Col>
 			</Row>
-			
+
 			<Weapons characterId={characterId} />
 			<Armor characterId={characterId} />
 			<Equipment characterId={characterId} />
@@ -546,7 +574,13 @@ const CharacterCore = () => {
 			<Spells characterId={characterId} />
 			<Row className='pt-2'>
 				<Col>
-					<Form.Control as='textarea' rows='10' placeholder='Notes' value={character.notes || ''} onChange={(e) => handleChange('notes', e.target.value)} />
+					<Form.Control
+						as='textarea'
+						rows='10'
+						placeholder='Notes'
+						value={character.notes || ''}
+						onChange={(e) => handleChange('notes', e.target.value)}
+					/>
 				</Col>
 			</Row>
 			{/* <pre>
@@ -566,6 +600,8 @@ const CharacterCore = () => {
 					Patrons
 					<br />
 					Patrons Taints for spell failures
+					<br />
+					Beast Notes
 					<br />
 					BUGS:
 					<br />

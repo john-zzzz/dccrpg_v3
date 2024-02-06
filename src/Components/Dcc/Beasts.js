@@ -104,13 +104,13 @@ const Beasts = (props) => {
 										<InputGroup>
 											<Form.Control
 												title='Current'
-												value={beast.hitPoints.current.value || ''}
+												value={beast.hitPoints && beast.hitPoints.current.value || ''}
 												onChange={(e) => handleChange(`beasts.${beastKey}.hitPoints.current.value`, e.target.value)}
 											/>
 											<InputGroup.Text>/</InputGroup.Text>
 											<Form.Control
 												title='Max'
-												value={beast.hitPoints.max || ''}
+												value={beast.hitPoints && beast.hitPoints.max || ''}
 												onChange={(e) => handleChange(`beasts.${beastKey}.hitPoints.max`, e.target.value)}
 											/>
 										</InputGroup>
@@ -145,7 +145,7 @@ const Beasts = (props) => {
 											variant='outline-secondary'
 											onClick={() => handleDiceRoll(`${beast.name || beast.type} Action Die`, beast.actionDie, `beasts.${beastKey}.actionDie.number`)}>
 											<FontAwesomeIcon icon={faDiceD20} />
-											{formatDieResult(beast.actionDie)}
+											{beast.actionDie && formatDieResult(beast.actionDie)}
 										</Button>
 									</Col>
 								</Row>
@@ -193,7 +193,7 @@ const Beasts = (props) => {
 									</Col>
 									<Col lg='2'>
 										<SelectInput
-											value={beast.alignment.key}
+											value={(beast.alignment && beast.alignment.key) || 'neutral'}
 											options={Object.keys(references.alignments).map((alignment) => {
 												return { label: references.alignments[alignment].name, value: alignment };
 											})}
@@ -221,7 +221,7 @@ const Beasts = (props) => {
 																	})
 																}
 															/>
-															{formatDieResult(attack.damage)}
+															{attack.damage && formatDieResult(attack.damage)}
 														</Button>
 													</InputGroup>
 												</Col>

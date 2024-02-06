@@ -5,8 +5,14 @@ export const classLevels = {
 			key: 0,
 			actionDice: { die1: { number: 1, die: dice.d20 } },
 			critDie: { number: 1, die: dice.d4 },
-			critTableNumber: 1
-		}
+			critTableNumber: 1,
+		},
+		1: {
+			key: 1,
+			actionDice: { die1: { number: 1, die: dice.d20 } },
+			critDie: { number: 1, die: dice.d4 },
+			critTableNumber: 1,
+		},
 	},
 
 	warrior: {
@@ -27,10 +33,10 @@ export const classLevels = {
 					die: dice.d20,
 					ranges: [
 						{ min: { _ref: 'class.criticalHitRange.min' }, name: 'Critical Hit!', variant: 'success' },
-						{ max: 1, name: 'Fumble!', variant: 'failure' }
-					]
-				}
-			}
+						{ max: 1, name: 'Fumble!', variant: 'failure' },
+					],
+				},
+			},
 		},
 		2: {
 			key: 2,
@@ -42,7 +48,7 @@ export const classLevels = {
 			title: { lawful: 'Champion', chaotic: 'Brigand', neutral: 'Barbarian' },
 			deedDie: { number: 1, die: dice.d4, ranges: [{ min: 3, variant: 'success' }] },
 			criticalHitRange: { min: 19 },
-			actionDice: { die1: { number: 1, die: dice.d20 } }
+			actionDice: { die1: { number: 1, die: dice.d20 } },
 		},
 		3: {
 			key: 3,
@@ -54,7 +60,7 @@ export const classLevels = {
 			title: { lawful: 'Knight', chaotic: 'Maurauder', neutral: 'Berserker' },
 			deedDie: { number: 1, die: dice.d5, ranges: [{ min: 3, variant: 'success' }] },
 			criticalHitRange: { min: 19 },
-			actionDice: { die1: { number: 1, die: dice.d20 } }
+			actionDice: { die1: { number: 1, die: dice.d20 } },
 		},
 		4: {
 			key: 4,
@@ -66,7 +72,7 @@ export const classLevels = {
 			title: { lawful: 'Cavalier', chaotic: 'Ravager', neutral: 'Headman' },
 			deedDie: { number: 1, die: dice.d6, ranges: [{ min: 3, variant: 'success' }] },
 			criticalHitRange: { min: 19 },
-			actionDice: { die1: { number: 1, die: dice.d20 } }
+			actionDice: { die1: { number: 1, die: dice.d20 } },
 		},
 		5: {
 			key: 5,
@@ -78,7 +84,7 @@ export const classLevels = {
 			title: { lawful: 'Paladin', chaotic: 'Reaver', neutral: 'Chieftan' },
 			deedDie: { number: 1, die: dice.d7, ranges: [{ min: 3, variant: 'success' }] },
 			criticalHitRange: { min: 19 },
-			actionDice: { die1: { number: 1, die: dice.d20 }, die2: { number: 1, die: dice.d14 } }
+			actionDice: { die1: { number: 1, die: dice.d20 }, die2: { number: 1, die: dice.d14 } },
 		},
 		6: {
 			key: 6,
@@ -89,7 +95,7 @@ export const classLevels = {
 			willPowerModifier: 2,
 			deedDie: { number: 1, die: dice.d8, ranges: [{ min: 3, variant: 'success' }] },
 			criticalHitRange: { min: 18 },
-			actionDice: { die1: { number: 1, die: dice.d20 }, die2: { number: 1, die: dice.d16 } }
+			actionDice: { die1: { number: 1, die: dice.d20 }, die2: { number: 1, die: dice.d16 } },
 		},
 		7: {
 			key: 7,
@@ -100,7 +106,7 @@ export const classLevels = {
 			willPowerModifier: 2,
 			deedDie: { number: 1, die: dice.d10, modifier: 1, ranges: [{ min: 3, variant: 'success' }] },
 			criticalHitRange: { min: 18 },
-			actionDice: { die1: { number: 1, die: dice.d20 }, die2: { number: 1, die: dice.d20 } }
+			actionDice: { die1: { number: 1, die: dice.d20 }, die2: { number: 1, die: dice.d20 } },
 		},
 		8: {
 			key: 8,
@@ -112,7 +118,7 @@ export const classLevels = {
 			deedDie: { number: 1, die: dice.d10, modifier: 2, ranges: [{ min: 3, variant: 'success' }] },
 			criticalHitRange: { min: 18 },
 
-			actionDice: { die1: { number: 1, die: dice.d20 }, die2: { number: 1, die: dice.d20 } }
+			actionDice: { die1: { number: 1, die: dice.d20 }, die2: { number: 1, die: dice.d20 } },
 		},
 		9: {
 			key: 9,
@@ -123,7 +129,7 @@ export const classLevels = {
 			willPowerModifier: 3,
 			deedDie: { number: 1, die: dice.d10, modifier: 3, ranges: [{ min: 3, variant: 'success' }] },
 			criticalHitRange: { min: 17 },
-			actionDice: { die1: { number: 1, die: dice.d20 }, die2: { number: 1, die: dice.d20 } }
+			actionDice: { die1: { number: 1, die: dice.d20 }, die2: { number: 1, die: dice.d20 } },
 		},
 		10: {
 			key: 10,
@@ -134,9 +140,51 @@ export const classLevels = {
 			willPowerModifier: 3,
 			deedDie: { number: 1, die: dice.d10, modifier: 4, ranges: [{ min: 3, variant: 'success' }] },
 			criticalHitRange: { min: 17 },
-			actionDice: { die1: { number: 1, die: dice.d20 }, die2: { number: 1, die: dice.d20 }, die3: { number: 1, die: dice.d4 } }
-		}
-	}
+			actionDice: {
+				die1: { number: 1, die: dice.d20 },
+				die2: { number: 1, die: dice.d20 },
+				die3: { number: 1, die: dice.d4 },
+			},
+		},
+	},
+	halfling: {
+		1: {
+			key: 1,
+			critDie: { number: 1, die: dice.d12 },
+			critTableNumber: 1,
+			reflexModifier: 1,
+			fortitudeModifier: 1,
+			willPowerModifier: 0,
+			actionDice: {
+				die1: {
+					number: 1,
+					die: dice.d20,
+					ranges: [
+						{ min: 20, name: 'Critical Hit!', variant: 'success' },
+						{ max: 1, name: 'Fumble!', variant: 'failure' },
+					],
+				},
+			},
+		},
+		2: {
+			key: 2,
+			critDie: { number: 1, die: dice.d12 },
+			critTableNumber: 1,
+			reflexModifier: 1,
+			fortitudeModifier: 1,
+			willPowerModifier: 0,
+			actionDice: {
+				die1: {
+					number: 1,
+					die: dice.d20,
+					ranges: [
+						{ min: 20, name: 'Critical Hit!', variant: 'success' },
+						{ max: 1, name: 'Fumble!', variant: 'failure' },
+					],
+				},
+			},
+		},
+	},
 };
 
 export const classes = {
@@ -169,12 +217,28 @@ export const classes = {
 			'spear',
 			'staff',
 			'twoHandedSword',
-			'warhammer'
+			'warhammer',
 		],
 		militantOrder: '',
 		luckyWeapon: '',
-		classLevel: { _default: { _ref: ['classLevels', 'warrior', { _ref: 'level.key' }] } }
+		classLevel: { _default: { _ref: ['classLevels', 'warrior', { _ref: 'level.key' }] } },
 	},
-	cleric: { key: 'cleric', name: 'Cleric' },
-	wizard: { key: 'wizard', name: 'Wizard' }
+	cleric: {
+		key: 'cleric',
+		name: 'Cleric',
+
+	},
+	wizard: { key: 'wizard', name: 'Wizard' },
+	thief: { key: 'thief', name: 'Thief' },
+	dwarf: { key: 'dwarf', name: 'Dwarf' },
+	elf: { key: 'elf', name: 'Elf' },
+	halfling: {
+		key: 'halfling',
+		name: 'Halfling',
+		classLevel: { _default: { _ref: ['classLevels', 'halfling', { _ref: 'level.key' }] } },
+		manualPage: 64,
+		hitDice: { number: 1, die: dice.d6 },
+		trainedWeapons: ['club', 'crossbow', 'dagger', 'dart', 'handaxe', 'javelin', 'shortbow', 'shortSword', 'staff'],
+		minAgility: 16,
+	},
 };

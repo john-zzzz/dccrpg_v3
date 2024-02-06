@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faSkullCrossbones, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import CharacterFundamentals from './CharacterFundamentals';
 import CharacterCore from './CharacterCore';
 import DiceHistory from '../Controls/DiceHistory';
 import Leveller from './Leveller';
+import { removeCharacter, updateCharacterProperty } from '../../slices/dcc/charactersSlice';
 
 const Character = () => {
 	let contentTop = '50px';
@@ -25,6 +26,11 @@ const Character = () => {
 
 	character = character && character.character;
 
+	const dispatch = useDispatch();
+	const handleChange = (propertyPath, value) => {
+		dispatch(updateCharacterProperty({ characterId: character.id, propertyPath: propertyPath, value: value }));
+	};
+
 	useEffect(() => {
 		document.title = character ? character.name : 'Character';
 	}, [character]);
@@ -36,6 +42,10 @@ const Character = () => {
 
 	const handleShowLeveller = (show) => {
 		setShowLeveller(show);
+	};
+
+	const handleDeleteCharacter = () => {
+		dispatch(removeCharacter({ id: character.id }));
 	};
 
 	if (!character) {
@@ -66,7 +76,23 @@ const Character = () => {
 									{leftDrawer.isOpen ? <FontAwesomeIcon icon={faArrowLeft} /> : <FontAwesomeIcon icon={faUser} />}
 								</Button>
 							</Col>
-							{leftDrawer.isOpen && <Col className='m-1'>Additional Actions</Col>}
+							{leftDrawer.isOpen && (
+								<>
+									<Col className='m-1'>
+										<Button className='w-100' variant='outline-danger' onClick={() => handleChange('deceased', !character.deceased)}>
+											{leftDrawer.isOpen ? <FontAwesomeIcon icon={faSkullCrossbones} /> : <FontAwesomeIcon icon={faUser} />}
+										</Button>
+									</Col>
+									{character.deceased && (
+										<Col>
+											<Button className='w-100' variant='outline-danger' onClick={() => handleDeleteCharacter()}>
+												{leftDrawer.isOpen ? <FontAwesomeIcon icon={faTrash} /> : <FontAwesomeIcon icon={faTrash} />}
+											</Button>
+										</Col>
+									)}
+									<Col></Col>
+								</>
+							)}
 						</Row>
 						{leftDrawer.isOpen && (
 							<>
@@ -94,7 +120,7 @@ const Character = () => {
 				}}>
 				<Container fluid>
 					<CharacterCore />
-					</Container>
+				</Container>
 			</div>
 			<DiceHistory />
 		</div>

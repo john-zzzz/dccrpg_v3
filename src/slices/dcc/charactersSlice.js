@@ -3,11 +3,22 @@ import { rollDice, dice } from '../diceSlice';
 import { dccReferences } from '../../references/dccReferences';
 import { deepCopy, evaluate, setValue } from '../../objectEvaluator/evaluator2';
 
-export const generateCharacter = () => {
+export const generateCharacter = (race) => {
 	let references = dccReferences;
+	let startingCharacterNumber = Math.floor(Math.random() * 100);
+
+	if (race === 'human') {
+		startingCharacterNumber = 0 + Math.floor(Math.random() * 69);
+	} else if (race === 'dwarf') {
+		startingCharacterNumber = 70 + Math.floor(Math.random() * 11);
+	} else if (race === 'elf') {
+		startingCharacterNumber = 81 +Math.floor(Math.random() * 10);
+	} else if (race === 'halfling') {
+		startingCharacterNumber = 91 + Math.floor(Math.random() * 10);
+	}
 
 	let characterModel = {
-		startingCharacter: { _ref: ['startingCharacters', rollDice(dice.d4).total - 1] },
+		startingCharacter: { _ref: ['startingCharacters', startingCharacterNumber] },
 		race: { _ref: 'startingCharacter.race' },
 		occupation: { _ref: 'startingCharacter.occupation' },
 		strength: {
@@ -17,7 +28,9 @@ export const generateCharacter = () => {
 			currentModifier: { _sum: [{ _ref: 'strength.modifier' }, { _ref: 'strength.tempModifier' }] }
 		},
 		agility: {
-			base: rollDice({ number: 3, die: dice.d3 }).total,
+			startingRoll: rollDice({ number: 3, die: dice.d3 }).total,
+			// TODO: _min should have a first if the race doesn't have a minAgility
+			base: { _ref: 'startingRoll', _min: { _ref: 'race.minAgility' } },
 			tempModifier: 0,
 			modifier: { _ref: ['attributeModifiers', { _ref: 'agility.base' }] },
 			currentModifier: { _sum: [{ _ref: 'agility.modifier' }, { _ref: 'agility.tempModifier' }] }
@@ -104,9 +117,9 @@ const loadCharacters = () => {
 
 const dccCharactersSlice = createSlice({
 	name: 'dccCharacters',
-	initialState: (() => {
+	initialState: () => {
 		return loadCharacters();
-	}),
+	},
 
 	reducers: {
 		addCharacter: (state, action) => {
